@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block link %}
+<link rel="stylesheet" href="{% static 'css/my_books.css' %}">
+{% endblock %}
+
+{% block title %}{% trans "Menin kitaphanam"%}{% endblock %}
+
+{% block content %}
+<div class="content">
+    <h2>{% trans "Meniň kitaplarym" %}</h2>
+    <div class="book-form">
+        <h3>{% trans "Kitap goşmak" %}</h3>
+        {% trans "Kitabyň adyny ýaz" as title_placeholder %}
+        <input type="text" id="book-title" placeholder="{{ title_placeholder }}" required>
+
+        {% trans "Düşündiriş (zähmet haky ilkinji ýazylmaly!)" as desc_placeholder %}
+        <input type="text" id="book-description" placeholder="{{ desc_placeholder }}">
+
+        <select id="book-category" required>
+            <option value="1">{% trans "Kitap" %}</option>
+            <option value="2">{% trans "Gollanma" %}</option>
+            <option value="3">{% trans "Okuw maksatnama" %}</option>
+            <option value="4">{% trans "Ylmy iş" %}</option>
+            <option value="5">{% trans "Referat" %}</option>
+            <option value="6">{% trans "Diplom işi" %}</option>
+            <option value="7">{% trans "Sapak ýazgysy" %}</option>
+        </select>
+
+        <input type="file" id="book-pdf" accept="application/pdf">
+
+        <div class="toggle-switch">
+            <input type="checkbox" id="allow-download" name="allow_download">
+            <label for="allow-download"></label>
+            <span>{% trans "Ýüklemäne rugsat bermek" %}</span>
+        </div>
+
+        <button onclick="addBook()">{% trans "Kitaby goş"%}</button>
+    </div>
+
+    <div id="books"></div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'js/my_books.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% load i18n%}
+{% load static%}
+<!DOCTYPE html>
+<html lang="tk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+    <title>{% trans "Hasaba alyş"%}</title>
+</head>
+<body>
+<div class="container">
+    <h2>{% trans "Giriş"%}</h2>
+    <form class="auth-form" id="login-form">
+        <div class="form-group">
+            <input type="text" id="login-username" placeholder="User name" required>
+        </div>
+        <div class="form-group">
+            <input type="password" id="login-password" placeholder="Pin" required>
+        </div>
+        <button type="submit">{% trans "Taýýar!"%}</button>
+    </form>
+    <div class="switch-link" id="switch-link">
+        {% trans "Ulgamda ýok?"%} <a href="#" onclick="showRegister()">{% trans "Hasaba alyş"%}</a>
+    </div>
+    <form class="auth-form" id="register-form" style="display: none;">
+        <h2>{% trans "Hasaba alyş" %}</h2>
+        <div class="form-group">
+            <input type="text" id="reg-username" placeholder="User name" required>
+        </div>
+        <div class="form-group">
+            <input type="email" id="reg-email" placeholder="E-mail" required>
+        </div>
+        <div class="form-group">
+            <input type="password" id="reg-password" placeholder="Pin" required>
+        </div>
+        <button type="submit">Hasaba alyş</button>
+    </form>
+    <div class="switch-link" style="display: none;" id="login-link">
+        Ulgama girilen? <a href="#" onclick="showLogin()">Giriş</a>
+    </div>
+</div>
+</body>
+<script src="{% static 'js/auth.js' %}"></script>
+</html>

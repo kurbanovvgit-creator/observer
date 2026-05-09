@@ -1,0 +1,224 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-29 20:50+0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: .\book_platform\settings.py:44
+msgid "Russian"
+msgstr ""
+
+#: .\book_platform\settings.py:45
+msgid "English"
+msgstr ""
+
+#: .\book_platform\settings.py:46
+msgid "Turkmen"
+msgstr ""
+
+#: .\book_platform\settings.py:47
+msgid "Thailand"
+msgstr ""
+
+#: .\templates\ai_assistant.html:14
+msgid "Sanly Kitaphanaçy"
+msgstr ""
+
+#: .\templates\ai_assistant.html:20
+msgid ""
+"Salam! Men 'Synçy' ulgamynyň sanly kömekçisi. Size nähili kömek edip bilerin?"
+msgstr ""
+
+#: .\templates\ai_assistant.html:24
+msgid "Sora..."
+msgstr ""
+
+#: .\templates\auth.html:9 .\templates\auth.html:24 .\templates\auth.html:27
+msgid "Hasaba alyş"
+msgstr ""
+
+#: .\templates\auth.html:13
+msgid "Giriş"
+msgstr ""
+
+#: .\templates\auth.html:21
+msgid "Taýýar!"
+msgstr ""
+
+#: .\templates\auth.html:24
+msgid "Ulgamda ýok?"
+msgstr ""
+
+#: .\templates\inc\_nav.html:4 .\templates\my_books.html:13
+msgid "Meniň kitaplarym"
+msgstr ""
+
+#: .\templates\inc\_nav.html:5
+msgid "Teswirler"
+msgstr ""
+
+#: .\templates\inc\_nav.html:6 .\templates\posts.html:11
+msgid "Postlar/bildirişler"
+msgstr ""
+
+#: .\templates\inc\_nav.html:7 .\templates\profile.html:12
+msgid "Profil"
+msgstr ""
+
+#: .\templates\inc\_nav.html:11
+msgid "Çykyş"
+msgstr ""
+
+#: .\templates\inc\base.html:7 .\templates\index.html:12
+msgid "SYNÇY"
+msgstr ""
+
+#: .\templates\inc\base.html:21
+msgid "@This WebSite created by Kurbanov Yhlas"
+msgstr ""
+
+#: .\templates\index.html:8
+msgid "Meniň Kitaphanam"
+msgstr ""
+
+#: .\templates\index.html:14
+msgid "Registrasiýa geçmek"
+msgstr ""
+
+#: .\templates\my_books.html:9
+msgid "Menin kitaphanam"
+msgstr ""
+
+#: .\templates\my_books.html:15
+msgid "Kitap goşmak"
+msgstr ""
+
+#: .\templates\my_books.html:16
+msgid "Kitabyň adyny ýaz"
+msgstr ""
+
+#: .\templates\my_books.html:19
+msgid "Düşündiriş (zähmet haky ilkinji ýazylmaly!)"
+msgstr ""
+
+#: .\templates\my_books.html:23 .\templates\posts.html:14
+msgid "Kitap"
+msgstr ""
+
+#: .\templates\my_books.html:24 .\templates\posts.html:15
+msgid "Gollanma"
+msgstr ""
+
+#: .\templates\my_books.html:25
+msgid "Okuw maksatnama"
+msgstr ""
+
+#: .\templates\my_books.html:26 .\templates\posts.html:17
+msgid "Ylmy iş"
+msgstr ""
+
+#: .\templates\my_books.html:27 .\templates\posts.html:16
+msgid "Referat"
+msgstr ""
+
+#: .\templates\my_books.html:28 .\templates\posts.html:19
+msgid "Diplom işi"
+msgstr ""
+
+#: .\templates\my_books.html:29
+msgid "Sapak ýazgysy"
+msgstr ""
+
+#: .\templates\my_books.html:37
+msgid "Ýüklemäne rugsat bermek"
+msgstr ""
+
+#: .\templates\my_books.html:40
+msgid "Kitaby goş"
+msgstr ""
+
+#: .\templates\my_comments.html:7
+msgid "Meniň teswirlerim"
+msgstr ""
+
+#: .\templates\my_comments.html:10
+msgid "Meniň teswirlerim!"
+msgstr ""
+
+#: .\templates\posts.html:4
+msgid "Posts"
+msgstr ""
+
+#: .\templates\posts.html:18
+msgid "Konspekt"
+msgstr ""
+
+#: .\templates\posts.html:20
+msgid "Sapak ýazgylary"
+msgstr ""
+
+#: .\templates\posts.html:22
+msgid "Ady ýa-da Düşündirişi boýunça gözleg et!"
+msgstr ""
+
+#: .\templates\posts.html:25
+msgid "Gözle"
+msgstr ""
+
+#: .\templates\posts.html:30
+msgid "Yene gör"
+msgstr ""
+
+#: .\templates\posts.html:32
+msgid "Yüklenýär..."
+msgstr ""
+
+#: .\templates\profile.html:17
+msgid "Avatar ýok"
+msgstr ""
+
+#: .\templates\profile.html:21
+msgid "Ulanyjy ady"
+msgstr ""
+
+#: .\templates\profile.html:22
+msgid "Jemi kitaplar"
+msgstr ""
+
+#: .\templates\profile.html:23
+msgid "Jemi Laýk"
+msgstr ""
+
+#: .\templates\profile.html:24
+msgid "Dereje"
+msgstr ""
+
+#: .\templates\profile.html:25
+msgid "Terjimehal"
+msgstr ""
+
+#: .\templates\profile.html:29
+msgid "Terjimehaly täzelemek"
+msgstr ""
+
+#: .\templates\profile.html:50
+msgid "Save"
+msgstr ""
+
+#: .\test.py:1
+msgid "Samsyk Test"
+msgstr ""

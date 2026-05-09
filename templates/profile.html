@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static %}
+{% block title%}
+Profil
+{%endblock%}
+{% block link%}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock %}
+{% block content %}
+<div class="content">
+    <h2>{% trans "Profil" %}</h2>
+    <div class="profile-info">
+        {% if profile.avatar %}
+        <img src="{{ profile.avatar.url }}" alt="Awatar">
+        {% else %}
+        <div class="no-avatar">{% trans "Avatar ýok" %}</div>
+        {% endif %}
+
+        <div class="profile-details">
+            <p><strong>{% trans "Ulanyjy ady" %}:</strong> {{ request.user.username|default:"Görkezilmedi" }}</p>
+            <p><strong>{% trans "Jemi kitaplar" %}:</strong> {{ book_count|default:0 }}</p>
+            <p><strong>{% trans "Jemi Laýk" %}:</strong> {{ total_likes|default:0 }}</p>
+            <p><strong>{% trans "Dereje" %}:</strong> <span class="level-badge">{{ profile.level|default:0 }}</span></p>
+            <p><strong>{% trans "Terjimehal" %}:</strong> {{ profile.bio|default:"Görkezilmedi" }}</p>
+        </div>
+
+        <div class="profile-form">
+            <input type="text" id="bio" placeholder="{% trans 'Terjimehaly täzelemek' %}" value="{{ profile.bio|default:'' }}">
+
+            <input type="file" id="avatar" accept="image/*">
+
+            <div class="lang-setting-row">
+                <form action="/i18n/setlang/" method="post" class="inner-lang-form">
+                    {% csrf_token %}
+                    <input name="next" type="hidden" value="/profile/">
+                    <select name="language" class="profile-lang-select">
+                        {% get_current_language as CURRENT_LANG %}
+                        {% get_available_languages as ALL_LANGS %}
+                        {% for lang_code, lang_name in ALL_LANGS %}
+                        <option value="{{ lang_code }}" {% if lang_code in CURRENT_LANG %}selected{% endif %}>
+                            {{ lang_name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="profile-lang-btn">OK</button>
+                </form>
+            </div>
+
+            <button class="save-btn" onclick="updateProfile()">{% trans "Save" %}</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script%}
+<script src="{% static 'js/profile.js'%}"></script>
+{% endblock %}

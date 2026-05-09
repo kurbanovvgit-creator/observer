@@ -1,0 +1,233 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-20 20:09+0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: .\static\js\my_books.js:17
+msgid "Kitabyň ady hökman bolmaly!"
+msgstr "You must write book's name"
+
+#: .\static\js\my_books.js:18
+msgid "Kategoriýa Saýla!"
+msgstr "Choose your category"
+
+#: .\static\js\my_books.js:44
+msgid "Nädogry maglumatlar"
+msgstr "Wrong info"
+
+#: .\static\js\my_books.js:68
+msgid "No Title"
+msgstr "No Title"
+
+#: .\static\js\my_books.js:69
+msgid "No Description"
+msgstr "No Description"
+
+#: .\static\js\my_books.js:70
+msgid "Open a PDF"
+msgstr ""
+
+#: .\static\js\my_books.js:70 .\static\js\posts.js:84
+msgid "PDF ýok"
+msgstr "No PDF"
+
+#: .\static\js\my_books.js:71
+msgid "Category"
+msgstr "Category"
+
+#: .\static\js\my_books.js:71
+msgid "Belli däl"
+msgstr "Unknown"
+
+#: .\static\js\my_books.js:73
+msgid "Üýtgetmek"
+msgstr "Edit"
+
+#: .\static\js\my_books.js:74
+msgid "Öçürmek"
+msgstr "Delete"
+
+#: .\static\js\my_books.js:80 .\static\js\posts.js:122
+msgid "Kitap"
+msgstr "Book"
+
+#: .\static\js\my_books.js:81 .\static\js\posts.js:123
+msgid "Gollanma"
+msgstr "GuideBook"
+
+#: .\static\js\my_books.js:82
+msgid "Okuw maksatnama"
+msgstr "Study program"
+
+#: .\static\js\my_books.js:83 .\static\js\posts.js:125
+msgid "Ylmy iş"
+msgstr "Science work"
+
+#: .\static\js\my_books.js:84 .\static\js\posts.js:124
+msgid "Referat"
+msgstr "Abstract"
+
+#: .\static\js\my_books.js:85 .\static\js\posts.js:127
+msgid "Diplom işi"
+msgstr "Diplom work"
+
+#: .\static\js\my_books.js:86
+msgid "Sapak ýazgysy"
+msgstr "Curcillum"
+
+#: .\static\js\my_books.js:88 .\static\js\posts.js:204
+msgid "Ýatda saklamak"
+msgstr "Save"
+
+#: .\static\js\my_books.js:89
+msgid "Ýatyrmak"
+msgstr "Cancel"
+
+#: .\static\js\my_books.js:133
+msgid "Bu kitaby pozmak isleýärsiňizmi?"
+msgstr "Do you want to delete this book?"
+
+#: .\static\js\my_comments.js:46 .\static\js\posts.js:216
+msgid "Setir"
+msgstr "Stroke"
+
+#: .\static\js\my_comments.js:48
+msgid "Post"
+msgstr "Post"
+
+#: .\static\js\my_comments.js:49 .\static\js\posts.js:88
+msgid "Awtor"
+msgstr "Author"
+
+#: .\static\js\posts.js:53
+msgid "Postlar tapylmady."
+msgstr "Couldnt find posts"
+
+#: .\static\js\posts.js:83
+msgid "Kitaby açmak"
+msgstr "Open a Book"
+
+#: .\static\js\posts.js:83
+msgid "PDF download"
+msgstr "PDF download"
+
+#: .\static\js\posts.js:88
+msgid "Dereje"
+msgstr "Level"
+
+#: .\static\js\posts.js:89 .\static\js\posts.js:140
+msgid "Giňişleýin..."
+msgstr "More..."
+
+#: .\static\js\posts.js:92
+msgid "Mazmun ýok"
+msgstr "No description"
+
+#: .\static\js\posts.js:94
+msgid "Kategoriýa"
+msgstr "Category"
+
+#: .\static\js\posts.js:95
+msgid "Like"
+msgstr "Like"
+
+#: .\static\js\posts.js:97 .\static\js\posts.js:172
+msgid "Teswirler"
+msgstr "Comments"
+
+#: .\static\js\posts.js:99
+msgid "Teswir"
+msgstr "Comment"
+
+#: .\static\js\posts.js:100
+msgid "Setir belgisi"
+msgstr "Stroke number"
+
+#: .\static\js\posts.js:101
+msgid "Goşmak"
+msgstr "Add"
+
+#: .\static\js\posts.js:112
+msgid "Ähli postlar görkezildi"
+msgstr "All posts showed"
+
+#: .\static\js\posts.js:126
+msgid "Konspekt"
+msgstr "abstract"
+
+#: .\static\js\posts.js:128
+msgid "Sapak ýazgylary"
+msgstr "Curcillum"
+
+#: .\static\js\posts.js:130
+msgid "Näbelli kategoriýa"
+msgstr "Unknown Category"
+
+#: .\static\js\posts.js:137
+msgid "Gysga"
+msgstr "Short"
+
+#: .\static\js\posts.js:174
+msgid "Teswir ýok"
+msgstr "No Comment"
+
+#: .\static\js\posts.js:199
+msgid "Üýtget"
+msgstr "Edit"
+
+#: .\static\js\posts.js:200
+msgid "Öçür"
+msgstr "Delete"
+
+#: .\static\js\posts.js:208
+msgid "TASSYKLAMAK"
+msgstr "CONFIRM"
+
+#: .\static\js\posts.js:219
+msgid "Jogap ber"
+msgstr "Reply"
+
+#: .\static\js\posts.js:221
+msgid "Jogabyňyz"
+msgstr "Your answer"
+
+#: .\static\js\posts.js:222
+msgid "Ugratmak"
+msgstr "Send"
+
+#: .\static\js\posts.js:300
+msgid "Teswiri pozmak isleýärsiňizmi?"
+msgstr "Do you want to delete this book?"
+
+#: .\static\js\posts.js:354
+msgid "Вы точно хотите подтвердить комментарий?"
+msgstr "Do you sure that you want to confirm the comment"
+
+#: .\static\js\posts.js:368
+msgid "Не удалось подтвердить комментарий."
+msgstr "Couldnt confirm the comment"
+
+#~ msgid "Sözbaşysyz"
+#~ msgstr "Without begin word"
+
+#~ msgid "Awtor:"
+#~ msgstr "Author"
+
+#~ msgid "Näbelli"
+#~ msgstr "Unknown"
+
+#~ msgid "Kitaba post"
+#~ msgstr "Book's Post"

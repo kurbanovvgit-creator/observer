@@ -1,0 +1,232 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-20 20:08+0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: .\static\js\my_books.js:17
+msgid "Kitabyň ady hökman bolmaly!"
+msgstr "หนังสือเล่มนี้ต้องมีชื่อเรื่อง!"
+
+#: .\static\js\my_books.js:18
+msgid "Kategoriýa Saýla!"
+msgstr "เลือกหมวดหมู่!"
+
+#: .\static\js\my_books.js:44
+msgid "Nädogry maglumatlar"
+msgstr "ข้อมูลไม่ถูกต้อง"
+
+#: .\static\js\my_books.js:68
+msgid "No Title"
+msgstr "ไม่มีชื่อเรื่อง"
+
+#: .\static\js\my_books.js:69
+msgid "No Description"
+msgstr "ไม่มีคำอธิบาย"
+
+#: .\static\js\my_books.js:70
+msgid "Open a PDF"
+msgstr "เปิดไฟล์ PDF"
+
+#: .\static\js\my_books.js:70 .\static\js\posts.js:84
+msgid "PDF ýok"
+msgstr "ไม่มี PDF"
+
+#: .\static\js\my_books.js:71
+msgid "Category"
+msgstr "หมวดหมู่"
+
+#: .\static\js\my_books.js:71
+msgid "Belli däl"
+msgstr "ไม่ทราบ"
+
+#: .\static\js\my_books.js:73
+msgid "Üýtgetmek"
+msgstr "เปลี่ยน"
+
+#: .\static\js\my_books.js:74
+msgid "Öçürmek"
+msgstr "ลบ"
+
+#: .\static\js\my_books.js:80 .\static\js\posts.js:122
+msgid "Kitap"
+msgstr "หนังสือ"
+
+#: .\static\js\my_books.js:81 .\static\js\posts.js:123
+msgid "Gollanma"
+msgstr "แนะนำ"
+
+#: .\static\js\my_books.js:82
+msgid "Okuw maksatnama"
+msgstr "หลักสูตร"
+
+#: .\static\js\my_books.js:83 .\static\js\posts.js:125
+msgid "Ylmy iş"
+msgstr "งานทางวิทยาศาสตร์"
+
+#: .\static\js\my_books.js:84 .\static\js\posts.js:124
+msgid "Referat"
+msgstr "เชิงนามธรรม"
+
+#: .\static\js\my_books.js:85 .\static\js\posts.js:127
+msgid "Diplom işi"
+msgstr "วิทยานิพนธ์ระดับปริญญาตรี"
+
+#: .\static\js\my_books.js:86
+msgid "Sapak ýazgysy"
+msgstr "บันทึกบทเรียน"
+
+#: .\static\js\my_books.js:88 .\static\js\posts.js:204
+msgid "Ýatda saklamak"
+msgstr "เพื่อจดจำ"
+
+#: .\static\js\my_books.js:89
+msgid "Ýatyrmak"
+msgstr "เพื่อเผยแพร่"
+
+#: .\static\js\my_books.js:133
+msgid "Bu kitaby pozmak isleýärsiňizmi?"
+msgstr "คุณต้องการลบหนังสือเล่มนี้หรือไม่?"
+
+#: .\static\js\my_comments.js:46 .\static\js\posts.js:216
+msgid "Setir"
+msgstr "เส้น"
+
+#: .\static\js\my_comments.js:48
+msgid "Post"
+msgstr "โพสต์"
+
+#: .\static\js\my_comments.js:49 .\static\js\posts.js:88
+msgid "Awtor"
+msgstr "ผู้เขียน"
+
+#: .\static\js\posts.js:53
+msgid "Postlar tapylmady."
+msgstr "ไม่พบโพสต์ใดๆ"
+
+#: .\static\js\posts.js:83
+msgid "Kitaby açmak"
+msgstr "เปิดหนังสือ"
+
+#: .\static\js\posts.js:83
+msgid "PDF download"
+msgstr "ดาวน์โหลดไฟล์ PDF"
+
+#: .\static\js\posts.js:88
+msgid "Dereje"
+msgstr "ระดับ"
+
+#: .\static\js\posts.js:89 .\static\js\posts.js:140
+msgid "Giňişleýin..."
+msgstr "ขยาย..."
+
+#: .\static\js\posts.js:92
+msgid "Mazmun ýok"
+msgstr "ไม่มีเนื้อหา"
+
+#: .\static\js\posts.js:94
+msgid "Kategoriýa"
+msgstr "หมวดหมู่"
+
+#: .\static\js\posts.js:95
+msgid "Like"
+msgstr "ชอบ"
+
+#: .\static\js\posts.js:97 .\static\js\posts.js:172
+msgid "Teswirler"
+msgstr "ความคิดเห็น"
+
+#: .\static\js\posts.js:99
+msgid "Teswir"
+msgstr "ความคิดเห็น"
+
+#: .\static\js\posts.js:100
+msgid "Setir belgisi"
+msgstr "หมายเลขบรรทัด"
+
+#: .\static\js\posts.js:101
+msgid "Goşmak"
+msgstr "เพิ่ม"
+
+#: .\static\js\posts.js:112
+msgid "Ähli postlar görkezildi"
+msgstr "โพสต์ทั้งหมดที่แสดง"
+
+#: .\static\js\posts.js:126
+msgid "Konspekt"
+msgstr "โครงร่าง"
+
+#: .\static\js\posts.js:128
+msgid "Sapak ýazgylary"
+msgstr "บันทึกบทเรียน"
+
+#: .\static\js\posts.js:130
+msgid "Näbelli kategoriýa"
+msgstr "หมวดหมู่ไม่ระบุ"
+
+#: .\static\js\posts.js:137
+msgid "Gysga"
+msgstr "สั้น"
+
+#: .\static\js\posts.js:174
+msgid "Teswir ýok"
+msgstr "ไม่มีความคิดเห็น"
+
+#: .\static\js\posts.js:199
+msgid "Üýtget"
+msgstr "เปลี่ยน"
+
+#: .\static\js\posts.js:200
+msgid "Öçür"
+msgstr "ปิด"
+
+#: .\static\js\posts.js:208
+msgid "TASSYKLAMAK"
+msgstr "อนุมัติ"
+
+#: .\static\js\posts.js:219
+msgid "Jogap ber"
+msgstr "คำตอบ."
+
+#: .\static\js\posts.js:221
+msgid "Jogabyňyz"
+msgstr "คำตอบของคุณ"
+
+#: .\static\js\posts.js:222
+msgid "Ugratmak"
+msgstr "เพื่อชัยชนะ"
+
+#: .\static\js\posts.js:300
+msgid "Teswiri pozmak isleýärsiňizmi?"
+msgstr "คุณต้องการลบความคิดเห็นนี้หรือไม่?"
+
+#: .\static\js\posts.js:354
+msgid "Вы точно хотите подтвердить комментарий?"
+msgstr "คุณต้องการยืนยันความคิดเห็นนั้นจริง ๆ หรือไม่?"
+
+#: .\static\js\posts.js:368
+msgid "Не удалось подтвердить комментарий."
+msgstr "ไม่สามารถยืนยันความคิดเห็นดังกล่าวได้"
+
+#~ msgid "Sözbaşysyz"
+#~ msgstr "ไม่มีชื่อเรื่อง"
+
+#~ msgid "Awtor:"
+#~ msgstr "ผู้เขียน:"
+
+#~ msgid "Näbelli"
+#~ msgstr "ไม่ทราบ"

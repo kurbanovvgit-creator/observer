@@ -1,0 +1,30 @@
+{% load i18n %}
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'css/ai_assistant.css' %}">
+
+<div id="ai-app-config" data-lang="{{ LANGUAGE_CODE }}" style="display: none;"></div>
+
+<div id="ai-assistant-container">
+    <div class="ai-launcher" onclick="toggleAIChat()" id="aiLauncher">✒️</div>
+
+    <div class="ai-window" id="aiWindow">
+        <div class="ai-header">
+            <div class="ai-title">
+                <span>{% trans "Sanly Kitaphanaçy" %}</span>
+            </div>
+            <button class="ai-close-btn" onclick="toggleAIChat()">&times;</button>
+        </div>
+
+        <div class="ai-chat-body" id="aiChatBody">
+            <div class="ai-bubble bot">{% trans "Salam! Men 'Synçy' ulgamynyň sanly kömekçisi. Size nähili kömek edip bilerin?" %}</div>
+        </div>
+
+        <div class="ai-chat-footer">
+            <input type="text" id="aiUserInput" placeholder="{% trans 'Sora...' %}" onkeypress="if(event.key==='Enter') sendAIMessage()">
+            <button onclick="sendAIMessage()">OK</button>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'js/ai_assistant.js' %}"></script>

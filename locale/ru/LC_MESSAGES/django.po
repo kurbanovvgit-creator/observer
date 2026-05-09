@@ -1,0 +1,229 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-29 20:50+0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
+"(n%100>=11 && n%100<=14)? 2 : 3);\n"
+
+#: .\book_platform\settings.py:44
+msgid "Russian"
+msgstr "Русский"
+
+#: .\book_platform\settings.py:45
+msgid "English"
+msgstr "Английский"
+
+#: .\book_platform\settings.py:46
+msgid "Turkmen"
+msgstr "Туркменский"
+
+#: .\book_platform\settings.py:47
+msgid "Thailand"
+msgstr "Тайский"
+
+#: .\templates\ai_assistant.html:14
+msgid "Sanly Kitaphanaçy"
+msgstr "ИИ асисстент"
+
+#: .\templates\ai_assistant.html:20
+msgid ""
+"Salam! Men 'Synçy' ulgamynyň sanly kömekçisi. Size nähili kömek edip bilerin?"
+msgstr ""
+"«Здравствуйте! Я цифровой ассистент системы «Наблюдатель». Чем я могу вам "
+"помочь?»"
+
+#: .\templates\ai_assistant.html:24
+msgid "Sora..."
+msgstr "Спросить..."
+
+#: .\templates\auth.html:9 .\templates\auth.html:24 .\templates\auth.html:27
+msgid "Hasaba alyş"
+msgstr "Регистрация"
+
+#: .\templates\auth.html:13
+msgid "Giriş"
+msgstr "Вход"
+
+#: .\templates\auth.html:21
+msgid "Taýýar!"
+msgstr "Готово!"
+
+#: .\templates\auth.html:24
+msgid "Ulgamda ýok?"
+msgstr "Еше не зарегетрировались?"
+
+#: .\templates\inc\_nav.html:4 .\templates\my_books.html:13
+msgid "Meniň kitaplarym"
+msgstr "Мои книги"
+
+#: .\templates\inc\_nav.html:5
+msgid "Teswirler"
+msgstr "Комментарии"
+
+#: .\templates\inc\_nav.html:6 .\templates\posts.html:11
+msgid "Postlar/bildirişler"
+msgstr "Посты"
+
+#: .\templates\inc\_nav.html:7 .\templates\profile.html:12
+msgid "Profil"
+msgstr "Профиль"
+
+#: .\templates\inc\_nav.html:11
+msgid "Çykyş"
+msgstr "Выходы"
+
+#: .\templates\inc\base.html:7 .\templates\index.html:12
+msgid "SYNÇY"
+msgstr "НАБЛЮДАТЕЛЬ"
+
+#: .\templates\inc\base.html:21
+msgid "@This WebSite created by Kurbanov Yhlas"
+msgstr "@Сайт был создан Курбановым Ыхласом"
+
+#: .\templates\index.html:8
+#, fuzzy
+#| msgid "Menin kitaphanam"
+msgid "Meniň Kitaphanam"
+msgstr "Мои книги"
+
+#: .\templates\index.html:14
+msgid "Registrasiýa geçmek"
+msgstr "Регистрация"
+
+#: .\templates\my_books.html:9
+msgid "Menin kitaphanam"
+msgstr "Мои книги"
+
+#: .\templates\my_books.html:15
+msgid "Kitap goşmak"
+msgstr "Дабавить Книгу"
+
+#: .\templates\my_books.html:16
+msgid "Kitabyň adyny ýaz"
+msgstr "Имя книги"
+
+#: .\templates\my_books.html:19
+msgid "Düşündiriş (zähmet haky ilkinji ýazylmaly!)"
+msgstr "Описание (Плата за ошибку пишите первым!)"
+
+#: .\templates\my_books.html:23 .\templates\posts.html:14
+msgid "Kitap"
+msgstr "Книга"
+
+#: .\templates\my_books.html:24 .\templates\posts.html:15
+msgid "Gollanma"
+msgstr "Справочник"
+
+#: .\templates\my_books.html:25
+msgid "Okuw maksatnama"
+msgstr "Конспект"
+
+#: .\templates\my_books.html:26 .\templates\posts.html:17
+msgid "Ylmy iş"
+msgstr "Научная работа"
+
+#: .\templates\my_books.html:27 .\templates\posts.html:16
+msgid "Referat"
+msgstr "Реферат"
+
+#: .\templates\my_books.html:28 .\templates\posts.html:19
+msgid "Diplom işi"
+msgstr "Дипломная работа"
+
+#: .\templates\my_books.html:29
+msgid "Sapak ýazgysy"
+msgstr "Классная работа"
+
+#: .\templates\my_books.html:37
+msgid "Ýüklemäne rugsat bermek"
+msgstr "Разрешение на скачивание"
+
+#: .\templates\my_books.html:40
+msgid "Kitaby goş"
+msgstr "Дабавить книгу"
+
+#: .\templates\my_comments.html:7
+msgid "Meniň teswirlerim"
+msgstr "Мои книги"
+
+#: .\templates\my_comments.html:10
+msgid "Meniň teswirlerim!"
+msgstr "Мои книги"
+
+#: .\templates\posts.html:4
+msgid "Posts"
+msgstr "Посты"
+
+#: .\templates\posts.html:18
+msgid "Konspekt"
+msgstr "Конспект"
+
+#: .\templates\posts.html:20
+msgid "Sapak ýazgylary"
+msgstr "Классная работа"
+
+#: .\templates\posts.html:22
+msgid "Ady ýa-da Düşündirişi boýunça gözleg et!"
+msgstr "Поиск по имени или по описании!"
+
+#: .\templates\posts.html:25
+msgid "Gözle"
+msgstr "Поиск"
+
+#: .\templates\posts.html:30
+msgid "Yene gör"
+msgstr "Ешё"
+
+#: .\templates\posts.html:32
+msgid "Yüklenýär..."
+msgstr "Скачиваем..."
+
+#: .\templates\profile.html:17
+msgid "Avatar ýok"
+msgstr "Нету Аватара"
+
+#: .\templates\profile.html:21
+msgid "Ulanyjy ady"
+msgstr "Имя пользователя"
+
+#: .\templates\profile.html:22
+msgid "Jemi kitaplar"
+msgstr "Мои книги"
+
+#: .\templates\profile.html:23
+msgid "Jemi Laýk"
+msgstr "Лайки"
+
+#: .\templates\profile.html:24
+msgid "Dereje"
+msgstr "Степень"
+
+#: .\templates\profile.html:25
+msgid "Terjimehal"
+msgstr "Биография"
+
+#: .\templates\profile.html:29
+msgid "Terjimehaly täzelemek"
+msgstr "Обновить биографию"
+
+#: .\templates\profile.html:50
+msgid "Save"
+msgstr "Сохранить"
+
+#: .\test.py:1
+msgid "Samsyk Test"
+msgstr ""

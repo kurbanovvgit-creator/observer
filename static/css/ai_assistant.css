@@ -1,0 +1,43 @@
+.ai-launcher {
+    position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px;
+    background: #8B4513; color: white; border-radius: 50%; display: flex;
+    align-items: center; justify-content: center; font-size: 26px;
+    cursor: pointer; box-shadow: 0 8px 20px rgba(0,0,0,0.3); z-index: 9999;
+    border: 2px solid #D4AF37; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.ai-launcher:hover { transform: scale(1.1) rotate(-10deg); }
+
+.ai-window {
+    position: fixed; bottom: 105px; right: 30px; width: 330px; height: 480px;
+    background: #FFFEF9; border: 2px solid #D4C5B9; border-radius: 12px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.2); display: none; flex-direction: column;
+    z-index: 9999; overflow: hidden; font-family: 'Crimson Text', serif;
+}
+
+.ai-header { background: #8B4513; color: white; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; }
+.ai-title { font-family: 'Playfair Display', serif; display: flex; align-items: center; gap: 10px; }
+.ai-settings-toggle { cursor: pointer; opacity: 0.7; font-size: 14px; }
+.ai-close-btn { background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
+
+.ai-api-panel { background: #F5EFE7; padding: 10px; display: none; border-bottom: 1px solid #D4C5B9; }
+.ai-api-panel input { width: 100%; padding: 6px; border: 1px solid #D4C5B9; border-radius: 4px; font-size: 12px; }
+
+.ai-chat-body { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: #FAF7F2; }
+.ai-bubble { padding: 10px 14px; border-radius: 10px; font-size: 15px; max-width: 85%; line-height: 1.4; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+.ai-bubble.bot { background: #F5EFE7; align-self: flex-start; border: 1px solid #D4C5B9; color: #2C1810; }
+.ai-bubble.user { background: #8B4513; color: white; align-self: flex-end; }
+
+.ai-chat-footer { padding: 12px; border-top: 1px solid #D4C5B9; display: flex; gap: 8px; background: white; }
+.ai-chat-footer input { flex: 1; padding: 8px 12px; border: 1px solid #D4C5B9; border-radius: 6px; outline: none; }
+.ai-chat-footer button { background: #D4AF37; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+@keyframes blink {
+    0% { opacity: .2; }
+    20% { opacity: 1; }
+    100% { opacity: .2; }
+}
+
+#aiChatBody .ai-bubble[id^="ai-loading"] {
+    font-weight: bold;
+    letter-spacing: 2px;
+    animation: blink 1.4s infinite both;
+}

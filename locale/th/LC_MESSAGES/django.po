@@ -1,0 +1,226 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-29 20:50+0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: .\book_platform\settings.py:44
+msgid "Russian"
+msgstr "รัสเซีย"
+
+#: .\book_platform\settings.py:45
+msgid "English"
+msgstr "ภาษาอังกฤษ"
+
+#: .\book_platform\settings.py:46
+msgid "Turkmen"
+msgstr "เติร์กเมน"
+
+#: .\book_platform\settings.py:47
+msgid "Thailand"
+msgstr "ประเทศไทย"
+
+#: .\templates\ai_assistant.html:14
+msgid "Sanly Kitaphanaçy"
+msgstr "บรรณารักษ์ดิจิทัล"
+
+#: .\templates\ai_assistant.html:20
+msgid ""
+"Salam! Men 'Synçy' ulgamynyň sanly kömekçisi. Size nähili kömek edip bilerin?"
+msgstr "สวัสดี! ฉันคือผู้ช่วยดิจิทัลของระบบ 'Observer' ฉันจะช่วยอะไรคุณได้บ้าง?"
+
+#: .\templates\ai_assistant.html:24
+msgid "Sora..."
+msgstr "ถาม..."
+
+#: .\templates\auth.html:9 .\templates\auth.html:24 .\templates\auth.html:27
+msgid "Hasaba alyş"
+msgstr "การลงทะเบียน"
+
+#: .\templates\auth.html:13
+msgid "Giriş"
+msgstr "ทางเข้า"
+
+#: .\templates\auth.html:21
+msgid "Taýýar!"
+msgstr "พร้อม!"
+
+#: .\templates\auth.html:24
+msgid "Ulgamda ýok?"
+msgstr "ไม่มีอยู่ในระบบใช่ไหม?"
+
+#: .\templates\inc\_nav.html:4 .\templates\my_books.html:13
+msgid "Meniň kitaplarym"
+msgstr "หนังสือของฉัน"
+
+#: .\templates\inc\_nav.html:5
+msgid "Teswirler"
+msgstr "ความคิดเห็น"
+
+#: .\templates\inc\_nav.html:6 .\templates\posts.html:11
+msgid "Postlar/bildirişler"
+msgstr "โพสต์"
+
+#: .\templates\inc\_nav.html:7 .\templates\profile.html:12
+msgid "Profil"
+msgstr "ประวัติโดยย่อ"
+
+#: .\templates\inc\_nav.html:11
+msgid "Çykyş"
+msgstr "ออกจากระบบ"
+
+#: .\templates\inc\base.html:7 .\templates\index.html:12
+msgid "SYNÇY"
+msgstr "การวิเคราะห์"
+
+#: .\templates\inc\base.html:21
+msgid "@This WebSite created by Kurbanov Yhlas"
+msgstr "@เว็บไซต์นี้สร้างโดย คูร์บานอฟ อิห์ลาส"
+
+#: .\templates\index.html:8
+#, fuzzy
+#| msgid "Menin kitaphanam"
+msgid "Meniň Kitaphanam"
+msgstr "หนังสือของฉัน"
+
+#: .\templates\index.html:14
+msgid "Registrasiýa geçmek"
+msgstr "ลงทะเบียน"
+
+#: .\templates\my_books.html:9
+msgid "Menin kitaphanam"
+msgstr "หนังสือของฉัน"
+
+#: .\templates\my_books.html:15
+msgid "Kitap goşmak"
+msgstr "เพิ่มหนังสือ"
+
+#: .\templates\my_books.html:16
+msgid "Kitabyň adyny ýaz"
+msgstr "เขียนชื่อหนังสือลงไป"
+
+#: .\templates\my_books.html:19
+msgid "Düşündiriş (zähmet haky ilkinji ýazylmaly!)"
+msgstr "คำอธิบาย (ต้องให้เครดิตก่อน!)"
+
+#: .\templates\my_books.html:23 .\templates\posts.html:14
+msgid "Kitap"
+msgstr "หนังสือ"
+
+#: .\templates\my_books.html:24 .\templates\posts.html:15
+msgid "Gollanma"
+msgstr "แนะนำ"
+
+#: .\templates\my_books.html:25
+msgid "Okuw maksatnama"
+msgstr "หลักสูตร"
+
+#: .\templates\my_books.html:26 .\templates\posts.html:17
+msgid "Ylmy iş"
+msgstr "งานทางวิทยาศาสตร์"
+
+#: .\templates\my_books.html:27 .\templates\posts.html:16
+msgid "Referat"
+msgstr "เชิงนามธรรม"
+
+#: .\templates\my_books.html:28 .\templates\posts.html:19
+msgid "Diplom işi"
+msgstr "วิทยานิพนธ์ระดับปริญญาตรี"
+
+#: .\templates\my_books.html:29
+msgid "Sapak ýazgysy"
+msgstr "บันทึกบทเรียน"
+
+#: .\templates\my_books.html:37
+msgid "Ýüklemäne rugsat bermek"
+msgstr "อนุญาตให้ดาวน์โหลด"
+
+#: .\templates\my_books.html:40
+msgid "Kitaby goş"
+msgstr "เพิ่มหนังสือ"
+
+#: .\templates\my_comments.html:7
+msgid "Meniň teswirlerim"
+msgstr "หนังสือของฉัน"
+
+#: .\templates\my_comments.html:10
+msgid "Meniň teswirlerim!"
+msgstr "หนังสือของฉัน"
+
+#: .\templates\posts.html:4
+msgid "Posts"
+msgstr "โพสต์"
+
+#: .\templates\posts.html:18
+msgid "Konspekt"
+msgstr "โครงร่าง"
+
+#: .\templates\posts.html:20
+msgid "Sapak ýazgylary"
+msgstr "บันทึกบทเรียน"
+
+#: .\templates\posts.html:22
+msgid "Ady ýa-da Düşündirişi boýunça gözleg et!"
+msgstr "ค้นหาตามชื่อเรื่องหรือคำอธิบาย!"
+
+#: .\templates\posts.html:25
+msgid "Gözle"
+msgstr "ค้นหา!"
+
+#: .\templates\posts.html:30
+msgid "Yene gör"
+msgstr "ลองใหม่อีกครั้ง"
+
+#: .\templates\posts.html:32
+msgid "Yüklenýär..."
+msgstr "กำลังโหลด..."
+
+#: .\templates\profile.html:17
+msgid "Avatar ýok"
+msgstr "ไม่มีอวตาร"
+
+#: .\templates\profile.html:21
+msgid "Ulanyjy ady"
+msgstr "ชื่อผู้ใช้"
+
+#: .\templates\profile.html:22
+msgid "Jemi kitaplar"
+msgstr "หนังสือของฉัน"
+
+#: .\templates\profile.html:23
+msgid "Jemi Laýk"
+msgstr "ยอดไลค์ทั้งหมด"
+
+#: .\templates\profile.html:24
+msgid "Dereje"
+msgstr "ระดับ"
+
+#: .\templates\profile.html:25
+msgid "Terjimehal"
+msgstr "ชีวประวัติ"
+
+#: .\templates\profile.html:29
+msgid "Terjimehaly täzelemek"
+msgstr "อัปเดตประวัติย่อ"
+
+#: .\templates\profile.html:50
+msgid "Save"
+msgstr "บันทึก"
+
+#: .\test.py:1
+msgid "Samsyk Test"
+msgstr ""

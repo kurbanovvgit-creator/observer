@@ -1,0 +1,30 @@
+{% load i18n %}
+<div class="navbar">
+    <div class="nav-buttons">
+        <a href="{% url 'my_books' %}" class="nav-btn">{% trans "Meniň kitaplarym"%}</a>
+        <a href="{% url 'my_comments' %}" class="nav-btn">{% trans "Teswirler" %}</a>
+        <a href="{% url 'posts' %}" class="nav-btn">{% trans "Postlar/bildirişler" %}</a>
+        <a href="{% url 'profile' %}" class="nav-btn">{% trans "Profil" %}</a>
+
+        <form action="{% url 'logout' %}" method="post" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="nav-btn">{% trans "Çykyş" %}</button>
+        </form>
+    </div>
+</div>
+
+<style>
+    .nav-btn {
+        display: inline-block;
+        padding: 8px 15px;
+        background: #eee;
+        border: 1px solid #ccc;
+        text-decoration: none;
+        color: black;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        font-family: inherit;
+    }
+
+</style>

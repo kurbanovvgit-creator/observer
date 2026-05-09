@@ -1,0 +1,86 @@
+/* АНИМАЦИЯ ТЕКСТА (ПЛАВНАЯ) */
+.typing-text {
+    font-family: 'Arial', sans-serif;
+    font-size: 4em;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+    margin-bottom: 20px;
+    white-space: nowrap;
+    overflow: hidden;
+    border-right: 4px solid #fff;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 0;
+
+    /* Убрали steps(), поставили linear для плавности */
+    animation:
+        smoothTyping 6s linear infinite,
+        blink 0.5s step-end infinite;
+}
+
+@keyframes smoothTyping {
+    0% { width: 0; }
+    35% { width: 9.5ch; } /* Увеличили до 9.5ch, чтобы слово OBSERVER точно влезло */
+    65% { width: 9.5ch; } /* Держим слово полностью открытым */
+    100% { width: 0; }
+}
+
+@keyframes blink {
+    50% { border-color: transparent; }
+}
+
+/* Остальные стили для красоты */
+footer {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 15px;
+    color: white;
+    display: flex;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/static/images/fon.jpg') no-repeat center center fixed;
+    background-size: cover;
+}
+
+.welcome-content {
+    text-align: center;
+    padding: 50px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border-radius: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+}
+
+.register-button {
+    display: inline-block;
+    padding: 16px 40px;
+    border-radius: 50px;
+    background: linear-gradient(90deg, #4facfe, #00f2fe);
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+}
+
+.register-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 242, 254, 0.4);
+}

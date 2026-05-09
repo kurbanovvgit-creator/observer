@@ -1,0 +1,38 @@
+{% include 'inc/_nav.html'%}
+<!DOCTYPE html>
+<html lang="tk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/css/posts.css">
+    <title>Postlar lentasy</title>
+</head>
+<body>
+<div class="content">
+    <h2>Postlar/bildirişler</h2>
+    <div class="filter-form">
+        <select id="category-filter" onchange="loadPosts(true)">
+            <option value="1">Kitap</option>
+            <option value="2">Gollanma</option>
+            <option value="3">Referat</option>
+            <option value="4">Ylmy iş</option>
+            <option value="5">Konspekt</option>
+            <option value="6">Diplom işi</option>
+            <option value="7">Sapak ýazgylary</option>
+        </select>
+        <input type="text" id="search-input" placeholder="Ady ýa-da Düşündirişi boýunça gözleg et!"
+               oninput="debouncedSearch()"/>
+        <button onclick="loadPosts()">Gözle</button>
+    </div>
+    <div id="post-list"></div>
+    <div id="load-more-container" style="text-align:center; margin:40px 0;">
+    <button id="load-more-btn" onclick="loadPosts()" style="padding:12px 32px; font-size:16px; cursor:pointer;">
+        Yene gör
+    </button>
+    <p id="loading-text" style="display:none; color:#666;">Yüklenýär...</p>
+</div>
+</div>
+<script src="../static/js/posts.js"></script>
+<footer>@This WebSite created by Kurbanov Yhlas</footer>
+</body>
+</html>

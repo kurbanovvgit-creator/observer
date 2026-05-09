@@ -1,0 +1,234 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-20 20:09+0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
+"(n%100>=11 && n%100<=14)? 2 : 3);\n"
+
+#: .\static\js\my_books.js:17
+msgid "Kitabyň ady hökman bolmaly!"
+msgstr "Имя книги обьязателен"
+
+#: .\static\js\my_books.js:18
+msgid "Kategoriýa Saýla!"
+msgstr "Выбери категорию!"
+
+#: .\static\js\my_books.js:44
+msgid "Nädogry maglumatlar"
+msgstr "Неправильная информация"
+
+#: .\static\js\my_books.js:68
+msgid "No Title"
+msgstr "Нету заголовка"
+
+#: .\static\js\my_books.js:69
+msgid "No Description"
+msgstr "Нету описания"
+
+#: .\static\js\my_books.js:70
+msgid "Open a PDF"
+msgstr "Открыть ПДФ"
+
+#: .\static\js\my_books.js:70 .\static\js\posts.js:84
+msgid "PDF ýok"
+msgstr "Нету ПДФ"
+
+#: .\static\js\my_books.js:71
+msgid "Category"
+msgstr "Категоря"
+
+#: .\static\js\my_books.js:71
+msgid "Belli däl"
+msgstr "Неизвестно"
+
+#: .\static\js\my_books.js:73
+msgid "Üýtgetmek"
+msgstr "Изменить"
+
+#: .\static\js\my_books.js:74
+msgid "Öçürmek"
+msgstr "Удалить"
+
+#: .\static\js\my_books.js:80 .\static\js\posts.js:122
+msgid "Kitap"
+msgstr "Книга"
+
+#: .\static\js\my_books.js:81 .\static\js\posts.js:123
+msgid "Gollanma"
+msgstr "Справочник"
+
+#: .\static\js\my_books.js:82
+msgid "Okuw maksatnama"
+msgstr "Учебное книга"
+
+#: .\static\js\my_books.js:83 .\static\js\posts.js:125
+msgid "Ylmy iş"
+msgstr "Научная работа"
+
+#: .\static\js\my_books.js:84 .\static\js\posts.js:124
+msgid "Referat"
+msgstr "Реферат"
+
+#: .\static\js\my_books.js:85 .\static\js\posts.js:127
+msgid "Diplom işi"
+msgstr "Дипломная работа"
+
+#: .\static\js\my_books.js:86
+msgid "Sapak ýazgysy"
+msgstr "Запись Урока"
+
+#: .\static\js\my_books.js:88 .\static\js\posts.js:204
+msgid "Ýatda saklamak"
+msgstr "Сохранить"
+
+#: .\static\js\my_books.js:89
+msgid "Ýatyrmak"
+msgstr "Отменить"
+
+#: .\static\js\my_books.js:133
+msgid "Bu kitaby pozmak isleýärsiňizmi?"
+msgstr "Вы точно хотите удалить"
+
+#: .\static\js\my_comments.js:46 .\static\js\posts.js:216
+msgid "Setir"
+msgstr "Строка"
+
+#: .\static\js\my_comments.js:48
+msgid "Post"
+msgstr "Пост"
+
+#: .\static\js\my_comments.js:49 .\static\js\posts.js:88
+msgid "Awtor"
+msgstr "Автор"
+
+#: .\static\js\posts.js:53
+msgid "Postlar tapylmady."
+msgstr "Посты не нашлись"
+
+#: .\static\js\posts.js:83
+msgid "Kitaby açmak"
+msgstr "Октрыть книгу"
+
+#: .\static\js\posts.js:83
+msgid "PDF download"
+msgstr "Скачать ПДФ"
+
+#: .\static\js\posts.js:88
+msgid "Dereje"
+msgstr "Уровень"
+
+#: .\static\js\posts.js:89 .\static\js\posts.js:140
+msgid "Giňişleýin..."
+msgstr "Больше..."
+
+#: .\static\js\posts.js:92
+msgid "Mazmun ýok"
+msgstr "Нету описания"
+
+#: .\static\js\posts.js:94
+msgid "Kategoriýa"
+msgstr "Категория"
+
+#: .\static\js\posts.js:95
+msgid "Like"
+msgstr "Лайки"
+
+#: .\static\js\posts.js:97 .\static\js\posts.js:172
+msgid "Teswirler"
+msgstr "Комментарии"
+
+#: .\static\js\posts.js:99
+msgid "Teswir"
+msgstr "Комментарий"
+
+#: .\static\js\posts.js:100
+msgid "Setir belgisi"
+msgstr "Номер строки"
+
+#: .\static\js\posts.js:101
+msgid "Goşmak"
+msgstr "Дабавить"
+
+#: .\static\js\posts.js:112
+msgid "Ähli postlar görkezildi"
+msgstr "Все посты показаны"
+
+#: .\static\js\posts.js:126
+msgid "Konspekt"
+msgstr "Конспект"
+
+#: .\static\js\posts.js:128
+msgid "Sapak ýazgylary"
+msgstr "Запись уроков"
+
+#: .\static\js\posts.js:130
+msgid "Näbelli kategoriýa"
+msgstr "Неизвестная категория"
+
+#: .\static\js\posts.js:137
+msgid "Gysga"
+msgstr "Коротко"
+
+#: .\static\js\posts.js:174
+msgid "Teswir ýok"
+msgstr "Нету комментария"
+
+#: .\static\js\posts.js:199
+msgid "Üýtget"
+msgstr "Изменить"
+
+#: .\static\js\posts.js:200
+msgid "Öçür"
+msgstr "Удалить"
+
+#: .\static\js\posts.js:208
+msgid "TASSYKLAMAK"
+msgstr "ПОДТВЕРДИТЬ"
+
+#: .\static\js\posts.js:219
+msgid "Jogap ber"
+msgstr "Ответить"
+
+#: .\static\js\posts.js:221
+msgid "Jogabyňyz"
+msgstr "Ваш ответ"
+
+#: .\static\js\posts.js:222
+msgid "Ugratmak"
+msgstr "Отправить"
+
+#: .\static\js\posts.js:300
+msgid "Teswiri pozmak isleýärsiňizmi?"
+msgstr "Вы точно хотите удалить комментарии?"
+
+#: .\static\js\posts.js:354
+msgid "Вы точно хотите подтвердить комментарий?"
+msgstr "Вы точно хотите подтвердить комментарий?"
+
+#: .\static\js\posts.js:368
+msgid "Не удалось подтвердить комментарий."
+msgstr "Не удалось подтвердить комментарий"
+
+#~ msgid "Sözbaşysyz"
+#~ msgstr "Без начального слова"
+
+#~ msgid "Awtor:"
+#~ msgstr "Автор:"
+
+#~ msgid "Näbelli"
+#~ msgstr "Неизвестен"

@@ -36,7 +36,7 @@ def ai_chat_view(request):
         try:
             data = json.loads(request.body)
             user_message = data.get('message')
-            api_key = data.get('api_key', 'AIzaSyDeFWbOAGwmcMN9SPiI1VxY9NLVpyG1eUI')  # Твой ключ
+            api_key = data.get('api_key', '')  # Твой ключ
             user_lang = data.get('lang', 'en')
 
             prompts = {

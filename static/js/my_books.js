@@ -1,11 +1,4 @@
-// 1. Вспомогательная функция для поддержки языков в URL
-function getLocalizedApiUrl(url) {
-    const lang = window.location.pathname.split('/')[1];
-    if (lang && lang.length === 2) {
-        return `/${lang}${url}`;
-    }
-    return url;
-}
+// 1. Убрали getLocalizedApiUrl, так как API теперь глобальное (вне i18n_patterns)
 
 function addBook() {
     const title = document.getElementById('book-title').value.trim();
@@ -26,8 +19,8 @@ function addBook() {
         formData.append('pdf', pdfInput.files[0]);
     }
 
-    // ИСПОЛЬЗУЕМ getLocalizedApiUrl
-    fetch(getLocalizedApiUrl('/api/books/create/'), {
+    // Используем ПРЯМОЙ путь /api/...
+    fetch('/api/books/create/', {
         method: 'POST',
         headers: { 'X-CSRFToken': getCookie('csrftoken') },
         body: formData
@@ -44,12 +37,12 @@ function addBook() {
             alert(data.message || gettext("Nädogry maglumatlar"));
         }
     })
-    .catch(error => alert('Серверда хаталyk: ' + error.message));
+    .catch(error => alert('Серверда хаталык: ' + error.message));
 }
 
 function loadBooks() {
-    // ИСПОЛЬЗУЕМ getLocalizedApiUrl
-    fetch(getLocalizedApiUrl('/api/books/'), {
+    // Используем ПРЯМОЙ путь /api/...
+    fetch('/api/books/', {
         method: 'GET',
         headers: { 'X-CSRFToken': getCookie('csrftoken') }
     })
@@ -70,11 +63,11 @@ function loadBooks() {
                 ${book.pdf ? `<a href="${book.pdf}" target="_blank">${gettext('Open a PDF')}</a>${book.allow_download ? ` | <a href="${book.pdf}" class="download-link" download>${gettext('Download a PDF')}</a>` : ''}` : gettext("PDF ýok")}
                 <p>${gettext("Category")}: ${book.category_display || gettext("Belli däl")}</p>
                 <div>
-                    <button class="edit" onclick="showEditForm(${book.id}, '${book.title.replace(/'/g, "\\'")}', '${book.description.replace(/'/g, "\\'")}', '${book.category}', ${book.allow_download})">${gettext('Üýtgetmek')}</button>
+                    <button class="edit" onclick="showEditForm(${book.id})">${gettext('Üýtgetmek')}</button>
                     <button class="delete" onclick="deleteBook(${book.id})">${gettext('Öçürmek')}</button>
                 </div>
                 <div class="edit-form" id="edit-form-${book.id}" style="display:none; border:1px solid #ddd; padding:10px; margin-top:10px;">
-                    <input type="text" id="edit-title-${book.id}" value="${book.title}" required>
+                    <input type="text" id="edit-title-${book.id}" value="${book.title.replace(/"/g, '&quot;')}" required>
                     <textarea id="edit-description-${book.id}">${book.description}</textarea>
                     <select id="edit-category-${book.id}">
                         <option value="1" ${book.category == '1' ? 'selected' : ''}>${gettext('Kitap')}</option>
@@ -85,6 +78,7 @@ function loadBooks() {
                         <option value="6" ${book.category == '6' ? 'selected' : ''}>${gettext('Diplom işi')}</option>
                         <option value="7" ${book.category == '7' ? 'selected' : ''}>${gettext('Sapak ýazgysy')}</option>
                     </select>
+                    <input type="file" id="edit-pdf-${book.id}" accept="application/pdf">
                     <button onclick="updateBook(${book.id})">${gettext('Ýatda saklamak')}</button>
                     <button onclick="hideEditForm(${book.id})">${gettext('Ýatyrmak')}</button>
                 </div>
@@ -100,20 +94,18 @@ function updateBook(bookId) {
     const description = document.getElementById(`edit-description-${bookId}`).value.trim();
     const category = document.getElementById(`edit-category-${bookId}`).value;
     const pdfInput = document.getElementById(`edit-pdf-${bookId}`);
-    const allowDownload = document.getElementById(`edit-allow-download-${bookId}`)?.checked;
 
     const formData = new FormData();
     formData.append('book_id', bookId);
     formData.append('title', title);
     formData.append('description', description);
     formData.append('category', category);
-    if(allowDownload !== undefined) formData.append('allow_download', allowDownload);
 
     if (pdfInput && pdfInput.files.length > 0) {
         formData.append('pdf', pdfInput.files[0]);
     }
 
-    fetch(getLocalizedApiUrl('/api/books/update/'), {
+    fetch('/api/books/update/', {
         method: 'POST',
         headers: { 'X-CSRFToken': getCookie('csrftoken') },
         body: formData
@@ -133,7 +125,7 @@ function deleteBook(bookId) {
     if (confirm(gettext("Bu kitaby pozmak isleýärsiňizmi?"))) {
         const formData = new FormData();
         formData.append('book_id', bookId);
-        fetch(getLocalizedApiUrl('/api/books/delete/'), {
+        fetch('/api/books/delete/', {
             method: 'POST',
             headers: { 'X-CSRFToken': getCookie('csrftoken') },
             body: formData

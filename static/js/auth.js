@@ -31,8 +31,8 @@ if (loginFormElement) {
         const username = document.getElementById('login-username').value;
         const password = document.getElementById('login-password').value;
 
-        // window.location.pathname автоматически подставит /tk/login/ или /ru/login/
-        fetch(window.location.pathname, {
+        // ИСПРАВЛЕНО: Прямой путь, чтобы не путать с регистрацией
+        fetch('/login/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -43,8 +43,8 @@ if (loginFormElement) {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                // Редирект на список книг относительно текущего языка
-                window.location.href = '../my-books/';
+                // Переход в личный кабинет
+                window.location.href = '/my-books/';
             } else {
                 alert(data.message || 'Girişde ýalňyşlyk');
             }
@@ -62,7 +62,8 @@ if (registerFormElement) {
         const email = document.getElementById('reg-email').value;
         const password = document.getElementById('reg-password').value;
 
-        fetch(window.location.pathname, {
+        // ИСПРАВЛЕНО: Прямой путь для регистрации
+        fetch('/register/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -73,7 +74,7 @@ if (registerFormElement) {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                window.location.href = '../my-books/';
+                window.location.href = '/my-books/';
             } else {
                 alert(data.message || 'Hasaba alyşda ýalňyşlyk');
             }
@@ -89,9 +90,9 @@ if (bgUpload) {
         const file = event.target.files[0];
         if (file) {
             const formData = new FormData();
-            formData.append('avatar', file); // В твоем views.py в profile_update ожидается 'avatar'
+            formData.append('avatar', file);
 
-            fetch('/api/profile/update/', { // Путь к API (проверь префиксы в urls.py)
+            fetch('/api/profile/update/', {
                 method: 'POST',
                 headers: {
                     'X-CSRFToken': getCookie('csrftoken')

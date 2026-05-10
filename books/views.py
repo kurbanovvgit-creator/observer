@@ -17,7 +17,7 @@ from django.utils.text import slugify
 from django.core.paginator import Paginator
 from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
-from google import genai
+import google.generativeai as genai
 logger = logging.getLogger(__name__)
 
 

@@ -39,10 +39,12 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    /* Comfortable breathing room on all sides */
     padding: 2rem 1rem;
     line-height: 1.7;
 }
 
+/* ── CARD ── */
 .container {
     width: 100%;
     max-width: 440px;
@@ -52,6 +54,8 @@ body {
     padding: 3.5rem 2.5rem 3rem;
     box-shadow: var(--shadow-xl), var(--shadow-book);
     animation: fadeIn 1.2s ease-out;
+    /* Prevent card from hugging the viewport edges */
+    box-sizing: border-box;
 }
 
 @keyframes fadeIn {
@@ -59,6 +63,7 @@ body {
     to   { opacity: 1; transform: translateY(0); }
 }
 
+/* ── HEADING ── */
 h2 {
     font-family: 'Playfair Display', Georgia, serif;
     font-size: 2.5rem;
@@ -81,10 +86,12 @@ h2::after {
     opacity: 0.7;
 }
 
+/* ── FORM GROUP ── */
 .form-group {
     margin-bottom: 1.5rem;
 }
 
+/* ── INPUTS ── */
 input[type="text"],
 input[type="email"],
 input[type="password"] {
@@ -95,9 +102,12 @@ input[type="password"] {
     background: var(--bg-paper);
     color: var(--text-primary);
     font-family: 'Crimson Text', serif;
-    font-size: 1.0625rem;
+    /* 16px prevents iOS auto-zoom on focus */
+    font-size: 16px;
     transition: all 0.3s ease;
     box-shadow: var(--shadow-sm);
+    /* Touch-friendly height */
+    min-height: 52px;
 }
 
 input:focus {
@@ -108,6 +118,7 @@ input:focus {
     transform: translateY(-1px);
 }
 
+/* ── SUBMIT BUTTON ── */
 button {
     width: 100%;
     padding: 1rem;
@@ -122,6 +133,8 @@ button {
     transition: all 0.4s ease;
     box-shadow: var(--shadow-lg);
     margin-top: 0.5rem;
+    /* Touch-friendly height */
+    min-height: 52px;
 }
 
 button:hover {
@@ -130,6 +143,7 @@ button:hover {
     box-shadow: var(--shadow-xl);
 }
 
+/* ── SWITCH LINK ── */
 .switch-link {
     text-align: center;
     margin-top: 1.8rem;
@@ -150,6 +164,7 @@ button:hover {
     border-color: var(--accent);
 }
 
+/* ── UPLOAD BUTTON ── */
 .upload-btn label {
     display: block;
     text-align: center;
@@ -157,11 +172,15 @@ button:hover {
     color: var(--text-secondary);
     font-size: 0.9rem;
     cursor: pointer;
-    padding: 0.6rem 1.2rem;
+    padding: 0.75rem 1.2rem;
     background: var(--bg-secondary);
     border: 1px solid var(--border);
     border-radius: var(--radius-xl);
     transition: all 0.3s ease;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .upload-btn label:hover {
@@ -172,3 +191,91 @@ button:hover {
 }
 
 #background-upload { display: none; }
+
+/* ══════════════════════════════════════════
+   RESPONSIVE — TABLETS  (≤ 768px)
+══════════════════════════════════════════ */
+@media (max-width: 768px) {
+    body {
+        padding: 1.5rem 1rem;
+        align-items: flex-start;
+        padding-top: 3rem;
+    }
+
+    .container {
+        padding: 2.5rem 2rem 2.5rem;
+        border-radius: 24px;
+        max-width: 100%;
+    }
+
+    h2 {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    h2::after {
+        font-size: 1.2rem;
+        bottom: -1rem;
+    }
+
+    button:hover {
+        transform: none;
+    }
+}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE — SMALL MOBILE  (≤ 480px)
+══════════════════════════════════════════ */
+@media (max-width: 480px) {
+    body {
+        padding: 1.25rem 0.75rem;
+        padding-top: 2rem;
+        /* Prevent background from causing overflow */
+        overflow-x: hidden;
+    }
+
+    .container {
+        padding: 2rem 1.25rem 2rem;
+        border-radius: 20px;
+        /* Subtle shadow is fine, drop the big one on tiny screens */
+        box-shadow: var(--shadow-lg), var(--shadow-book);
+    }
+
+    h2 {
+        font-size: 1.75rem;
+        margin-bottom: 1.75rem;
+        letter-spacing: 0;
+    }
+
+    h2::after {
+        font-size: 1.1rem;
+        bottom: -0.9rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.25rem;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+        padding: 0.875rem 1rem;
+        border-radius: 20px;
+    }
+
+    button {
+        font-size: 1rem;
+        padding: 0.875rem;
+        border-radius: 20px;
+    }
+
+    .upload-btn label {
+        font-size: 0.85rem;
+        border-radius: 20px;
+    }
+
+    .switch-link {
+        font-size: 0.9rem;
+        margin-top: 1.4rem;
+    }
+}

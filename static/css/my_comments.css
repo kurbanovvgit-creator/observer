@@ -39,6 +39,7 @@ body{
     color:var(--text-primary);
     line-height:1.8;
     min-height:100vh;
+    overflow-x:hidden;
 }
 
 body::before{
@@ -52,19 +53,20 @@ body::before{
     z-index:-1;
 }
 
+/* ── NAVBAR ── */
 .navbar{
     position:fixed;top:0;left:0;right:0;z-index:1000;
     background:var(--bg-card);
     border-bottom:2px solid var(--border);
     box-shadow:var(--shadow-md);
-    padding:1.25rem 2rem;
+    padding:0.875rem 1.5rem;
     display:flex;
     justify-content:space-between;
     align-items:center;
+    flex-wrap:wrap;
     gap:0.5rem;
 }
 
-/* Кнопки навигации и языки — одинаковые на всех страницах */
 .language-dropdown button,
 .navbar .nav-buttons button{
     background:var(--bg-secondary);
@@ -78,6 +80,7 @@ body::before{
     cursor:pointer;
     transition:all .3s ease;
     box-shadow:var(--shadow-sm);
+    min-height:44px;
 }
 .language-dropdown button:hover,
 .navbar .nav-buttons button:hover{
@@ -88,10 +91,18 @@ body::before{
     transform:translateY(-1px);
 }
 
+.navbar .nav-buttons{
+    display:flex;
+    flex-wrap:wrap;
+    gap:0.4rem;
+}
+
+/* ── CONTENT ── */
 .content{
     padding:7rem 2rem 4rem;
     max-width:900px;
     margin:0 auto;
+    width:100%;
 }
 
 h2{
@@ -114,6 +125,7 @@ h2::after{
     color:var(--accent);
 }
 
+/* ── COMMENT CARDS ── */
 #comments{
     display:grid;
     gap:2.2rem;
@@ -130,6 +142,7 @@ h2::after{
     overflow:hidden;
     transition:all .3s ease;
     animation:fadeIn .6s ease-out;
+    word-break:break-word;
 }
 
 .comment::before{
@@ -181,10 +194,11 @@ h2::after{
     border-top:1px solid var(--border);
 }
 
+/* ── FOOTER ── */
 footer{
     background:var(--bg-card);
     border-top:2px solid var(--border);
-    padding:2.5rem;
+    padding:2.5rem 1rem;
     text-align:center;
     color:var(--text-muted);
     font-style:italic;
@@ -193,15 +207,64 @@ footer{
     box-shadow:var(--shadow-sm);
 }
 
-/* Адаптив */
-@media(max-width:768px){
-    .content{padding:6rem 1rem 3rem;}
-    h2{font-size:2.3rem;}
-    .comment{padding:2rem;}
-}
-
-/* Книжный скроллбар */
+/* ── SCROLLBAR ── */
 ::-webkit-scrollbar{width:10px;}
 ::-webkit-scrollbar-track{background:var(--bg-secondary);}
 ::-webkit-scrollbar-thumb{background:var(--secondary);border-radius:5px;}
 ::-webkit-scrollbar-thumb:hover{background:var(--primary);}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE — TABLETS  (≤ 1024px)
+══════════════════════════════════════════ */
+@media(max-width:1024px){
+    .content{padding:7rem 1.5rem 3rem;}
+}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE — MOBILE  (≤ 768px)
+══════════════════════════════════════════ */
+@media(max-width:768px){
+    /* Navbar */
+    .navbar{
+        padding:0.75rem;
+        flex-direction:column;
+        align-items:stretch;
+        gap:0.5rem;
+    }
+    .navbar .nav-buttons{justify-content:center;}
+    .language-dropdown button,
+    .navbar .nav-buttons button{
+        font-size:0.8rem;
+        padding:0.5rem 0.75rem;
+    }
+
+    /* Content */
+    .content{padding:9.5rem 1rem 3rem;}
+    h2{font-size:2.3rem;}
+
+    /* Cards */
+    .comment{
+        padding:2rem 1.25rem;
+    }
+    .comment:hover{transform:none;}
+
+    .comment p:first-child{font-size:1.25rem;}
+    .comment p:nth-child(2){font-size:1rem;text-align:left;}
+    .comment p:last-child{font-size:0.875rem;text-align:left;}
+}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE — SMALL MOBILE  (≤ 480px)
+══════════════════════════════════════════ */
+@media(max-width:480px){
+    .content{padding:11rem 0.75rem 2.5rem;}
+    h2{font-size:1.8rem;}
+    .comment{
+        padding:1.5rem 1rem;
+        border-radius:var(--radius-md);
+    }
+    .comment p:first-child{font-size:1.125rem;margin-bottom:0.875rem;}
+    .comment p:nth-child(2){font-size:0.9375rem;line-height:1.75;}
+    .comment p:last-child{font-size:0.8125rem;padding-top:0.75rem;}
+    #comments{gap:1.5rem;}
+}

@@ -54,19 +54,20 @@ body::before{
     z-index:-1;
 }
 
+/* ── NAVBAR ── */
 .navbar{
     position:fixed;top:0;left:0;right:0;z-index:1000;
     background:var(--bg-card);
     border-bottom:2px solid var(--border);
     box-shadow:var(--shadow-md);
-    padding:1.25rem 2rem;
+    padding:0.875rem 1rem;
     display:flex;
     justify-content:space-between;
     align-items:center;
+    flex-wrap:wrap;
     gap:0.5rem;
 }
 
-/* Кнопки и языковой дропдаун — как на всех страницах */
 .language-dropdown button,
 .navbar .nav-buttons button{
     background:var(--bg-secondary);
@@ -80,6 +81,8 @@ body::before{
     cursor:pointer;
     transition:all .3s ease;
     box-shadow:var(--shadow-sm);
+    /* touch target */
+    min-height:44px;
 }
 .language-dropdown button:hover,
 .navbar .nav-buttons button:hover{
@@ -90,6 +93,13 @@ body::before{
     transform:translateY(-1px);
 }
 
+.navbar .nav-buttons{
+    display:flex;
+    flex-wrap:wrap;
+    gap:0.4rem;
+}
+
+/* ── CONTENT ── */
 .content{
     padding:7rem 2rem 4rem;
     max-width:800px;
@@ -98,6 +108,7 @@ body::before{
     display:flex;
     flex-direction:column;
     align-items:center;
+    width:100%;
 }
 
 h2{
@@ -119,6 +130,7 @@ h2::after{
     color:var(--accent);
 }
 
+/* ── PROFILE CARD ── */
 .profile-info{
     background:var(--bg-card);
     border:1px solid var(--border);
@@ -177,6 +189,8 @@ h2::after{
     justify-content:space-between;
     align-items:center;
     transition:all .3s ease;
+    text-align:left;
+    gap:0.75rem;
 }
 .profile-info p:hover{
     border-color:var(--primary);
@@ -187,8 +201,10 @@ h2::after{
     color:var(--text-primary);
     font-weight:600;
     font-family:'Lora',serif;
+    white-space:nowrap;
 }
 
+/* ── PROFILE FORM ── */
 .profile-form{
     margin-top:2.5rem;
     display:grid;
@@ -206,6 +222,9 @@ h2::after{
     font-size:1rem;
     transition:all .3s ease;
     box-shadow:var(--shadow-sm);
+    width:100%;
+    /* prevents iOS zoom on focus */
+    font-size:16px;
 }
 .profile-form input:focus{
     outline:none;
@@ -232,6 +251,8 @@ h2::after{
     cursor:pointer;
     transition:all .4s ease;
     box-shadow:var(--shadow-lg);
+    min-height:48px;
+    width:100%;
 }
 .profile-form button:hover{
     background:var(--primary-dark);
@@ -239,9 +260,10 @@ h2::after{
     box-shadow:var(--shadow-xl);
 }
 
+/* ── STATS GRID ── */
 .stats-grid{
     display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
     gap:1.5rem;
     margin:3rem 0;
     width:100%;
@@ -273,74 +295,7 @@ h2::after{
     font-size:0.95rem;
 }
 
-footer{
-    background:var(--bg-card);
-    border-top:2px solid var(--border);
-    padding:2.5rem;
-    text-align:center;
-    color:var(--text-muted);
-    font-style:italic;
-    font-size:0.9375rem;
-    margin-top:5rem;
-    box-shadow:var(--shadow-sm);
-}
-
-/* Адаптив */
-@media(max-width:768px){
-    .content{padding:6rem 1rem 3rem;}
-    h2{font-size:2.4rem;}
-    .profile-info{padding:2.5rem 2rem;}
-    .profile-info img{width:130px;height:130px;}
-    .stats-grid{grid-template-columns:1fr;}
-    .profile-info p{flex-direction:column;align-items:flex-start;gap:0.5rem;text-align:left;}
-}
-.profile-info {
-    background: var(--card);
-    border-radius: 20px;
-    padding: 2rem;
-    max-width: 600px;
-    margin: 0 auto;
-    box-shadow: var(--shadow-lg);
-    text-align: center;
-}
-
-.profile-avatar img {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 4px solid var(--primary);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-}
-
-.no-avatar {
-    width: 120px;
-    height: 120px;
-    background: var(--border);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-muted);
-    font-size: 0.9rem;
-    margin: 0 auto 1.5rem;
-}
-
-.profile-details p {
-    margin: 0.8rem 0;
-    font-size: 1.1rem;
-}
-
-.level-badge {
-    background: linear-gradient(135deg, #f59e0b, #f97316);
-    color: white;
-    padding: 0.4rem 1rem;
-    border-radius: 50px;
-    font-weight: bold;
-    font-size: 1rem;
-}
-
-/* Переключатель темы в профиле */
+/* ── PROFILE SETTING (theme toggle) ── */
 .profile-setting {
     display: flex;
     align-items: center;
@@ -351,6 +306,8 @@ footer{
     margin: 1.5rem 0;
     backdrop-filter: blur(10px);
     border: 1px solid var(--border);
+    gap: 1rem;
+    flex-wrap: wrap;
 }
 
 .setting-label {
@@ -360,16 +317,16 @@ footer{
 
 .theme-status {
     font-size: 0.95rem;
-    color: var(--text-light);
+    color: var(--text-muted);
     font-weight: 500;
 }
 
-/* Сам тумблер */
 .theme-switch {
     position: relative;
     display: inline-block;
     width: 68px;
     height: 38px;
+    flex-shrink: 0;
 }
 
 .theme-switch input { opacity: 0; width: 0; height: 0; }
@@ -394,7 +351,14 @@ footer{
     border-radius: 50%;
     transition: 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
 }
-/* Ряд выбора языка */
+
+.switch-slider .sun  { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 16px; }
+.switch-slider .moon { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 16px; color: #818cf8; }
+
+body.dark .switch-slider { background: #5b21b6; }
+body.dark .switch-slider:before { transform: translateX(30px); background: #ddd6fe; }
+
+/* ── LANGUAGE SETTING ── */
 .lang-setting-row {
     width: 100%;
     margin: 0.5rem 0;
@@ -402,23 +366,22 @@ footer{
 
 .inner-lang-form {
     display: flex;
-    gap: 10px; /* Отступ между селектом и кнопкой OK */
+    gap: 10px;
 }
 
-/* Стилизация селекта под твои инпуты */
 .profile-lang-select {
-    flex: 1; /* Растягиваем селект */
+    flex: 1;
     background: var(--bg-paper);
     border: 1px solid var(--border);
     color: var(--text-primary);
     padding: 0.8rem 1rem;
     border-radius: var(--radius-sm);
     font-family: 'Crimson Text', serif;
-    font-size: 1rem;
+    font-size: 16px; /* prevent iOS zoom */
     cursor: pointer;
+    min-height: 44px;
 }
 
-/* Кнопка OK рядом с селектом */
 .profile-lang-btn {
     background: var(--bg-secondary) !important;
     color: var(--text-primary) !important;
@@ -426,7 +389,8 @@ footer{
     padding: 0 1.2rem !important;
     font-size: 0.9rem !important;
     box-shadow: var(--shadow-sm) !important;
-    min-height: 100%;
+    min-height: 44px !important;
+    min-width: 44px;
 }
 
 .profile-lang-btn:hover {
@@ -434,19 +398,124 @@ footer{
     border-color: var(--primary) !important;
 }
 
-/* Основная кнопка Save */
 .save-btn {
     width: 100%;
     margin-top: 1rem;
 }
 
-.switch-slider .sun  { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 16px; }
-.switch-slider .moon { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 16px; color: #818cf8; }
+/* ── NO AVATAR ── */
+.no-avatar {
+    width: 120px;
+    height: 120px;
+    background: var(--border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin: 0 auto 1.5rem;
+}
 
-body.dark .switch-slider { background: #5b21b6; }
-body.dark .switch-slider:before { transform: translateX(30px); background: #ddd6fe; }
-/* Книжный скроллбар */
+.level-badge {
+    background: linear-gradient(135deg, #f59e0b, #f97316);
+    color: white;
+    padding: 0.4rem 1rem;
+    border-radius: 50px;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+/* ── FOOTER ── */
+footer{
+    background:var(--bg-card);
+    border-top:2px solid var(--border);
+    padding:2.5rem 1rem;
+    text-align:center;
+    color:var(--text-muted);
+    font-style:italic;
+    font-size:0.9375rem;
+    margin-top:5rem;
+    box-shadow:var(--shadow-sm);
+}
+
+/* ── SCROLLBAR ── */
 ::-webkit-scrollbar{width:10px;}
 ::-webkit-scrollbar-track{background:var(--bg-secondary);}
 ::-webkit-scrollbar-thumb{background:var(--secondary);border-radius:5px;}
 ::-webkit-scrollbar-thumb:hover{background:var(--primary);}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE — TABLETS  (≤ 1024px)
+══════════════════════════════════════════ */
+@media(max-width:1024px){
+    .content{padding:7rem 1.5rem 3rem;}
+    .stats-grid{grid-template-columns:repeat(2,1fr);}
+}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE — MOBILE  (≤ 768px)
+══════════════════════════════════════════ */
+@media(max-width:768px){
+    /* Navbar */
+    .navbar{
+        padding:0.75rem;
+        flex-direction:column;
+        align-items:stretch;
+        gap:0.5rem;
+    }
+    .navbar .nav-buttons{
+        justify-content:center;
+        flex-wrap:wrap;
+    }
+    .language-dropdown button,
+    .navbar .nav-buttons button{
+        font-size:0.8rem;
+        padding:0.5rem 0.75rem;
+    }
+
+    /* Content */
+    .content{padding:9rem 1rem 3rem;}
+
+    /* Headings */
+    h2{font-size:2rem;margin-bottom:3rem;}
+
+    /* Profile card */
+    .profile-info{padding:2rem 1.25rem;}
+    .profile-info img{width:110px;height:110px;}
+    .profile-info p{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:0.25rem;
+        font-size:1rem;
+        padding:0.875rem 1rem;
+    }
+    .profile-info p:hover{transform:translateX(3px);}
+
+    /* Stats */
+    .stats-grid{grid-template-columns:repeat(2,1fr);gap:1rem;}
+    .stat-number{font-size:1.75rem;}
+
+    /* Profile setting row */
+    .profile-setting{padding:1rem;gap:0.75rem;}
+    .inner-lang-form{flex-direction:column;}
+    .profile-lang-btn{min-height:44px;padding:0.75rem 1rem !important;}
+
+    /* Disable hover transforms on touch */
+    .profile-info:hover,
+    .stat-card:hover{transform:none;}
+}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE — SMALL MOBILE  (≤ 480px)
+══════════════════════════════════════════ */
+@media(max-width:480px){
+    .content{padding:10rem 0.75rem 2.5rem;}
+    h2{font-size:1.7rem;}
+    .profile-info{padding:1.5rem 1rem;}
+    .profile-info img{width:90px;height:90px;}
+    .stats-grid{grid-template-columns:1fr 1fr;gap:0.75rem;}
+    .stat-card{padding:1.25rem 1rem;}
+    .stat-number{font-size:1.5rem;}
+    .profile-form button{font-size:1rem;padding:0.9rem 1.5rem;}
+}

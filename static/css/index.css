@@ -1,4 +1,4 @@
-/* АНИМАЦИЯ ТЕКСТА (ПЛАВНАЯ) */
+/* ── TYPING ANIMATION (SMOOTH) ── */
 .typing-text {
     font-family: 'Arial', sans-serif;
     font-size: 4em;
@@ -13,17 +13,15 @@
     margin-left: auto;
     margin-right: auto;
     width: 0;
-
-    /* Убрали steps(), поставили linear для плавности */
     animation:
         smoothTyping 6s linear infinite,
         blink 0.5s step-end infinite;
 }
 
 @keyframes smoothTyping {
-    0% { width: 0; }
-    35% { width: 9.5ch; } /* Увеличили до 9.5ch, чтобы слово OBSERVER точно влезло */
-    65% { width: 9.5ch; } /* Держим слово полностью открытым */
+    0%   { width: 0; }
+    35%  { width: 9.5ch; }
+    65%  { width: 9.5ch; }
     100% { width: 0; }
 }
 
@@ -31,21 +29,7 @@
     50% { border-color: transparent; }
 }
 
-/* Остальные стили для красоты */
-footer {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 15px;
-    color: white;
-    display: flex;
-    justify-content: center;
-    position: fixed;
-    top: 0;
-    width: 100%;
-    z-index: 1000;
-}
-
+/* ── BODY ── */
 body {
     margin: 0;
     padding: 0;
@@ -54,10 +38,30 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/static/images/fon.jpg') no-repeat center center fixed;
+    background:
+        linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+        url('/static/images/fon.jpg') no-repeat center center fixed;
     background-size: cover;
 }
 
+/* ── NAVBAR (footer used as top bar) ── */
+footer {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 15px 20px;
+    color: white;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+/* ── WELCOME CARD ── */
 .welcome-content {
     text-align: center;
     padding: 50px;
@@ -65,9 +69,14 @@ body {
     backdrop-filter: blur(20px);
     border-radius: 40px;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    max-width: 700px;
+    /* prevent card from touching screen edges */
+    box-sizing: border-box;
 }
 
+/* ── REGISTER BUTTON ── */
 .register-button {
     display: inline-block;
     padding: 16px 40px;
@@ -78,9 +87,103 @@ body {
     font-weight: bold;
     letter-spacing: 1px;
     transition: all 0.3s ease;
+    /* touch-friendly size */
+    min-height: 52px;
+    min-width: 44px;
 }
 
 .register-button:hover {
     transform: translateY(-3px);
     box-shadow: 0 10px 20px rgba(0, 242, 254, 0.4);
+}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE — TABLETS  (≤ 1024px)
+══════════════════════════════════════════ */
+@media (max-width: 1024px) {
+    .typing-text {
+        font-size: 3.2em;
+    }
+    .welcome-content {
+        padding: 40px 35px;
+        max-width: 90%;
+    }
+}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE — MOBILE  (≤ 768px)
+══════════════════════════════════════════ */
+@media (max-width: 768px) {
+    /* Navbar */
+    footer {
+        padding: 12px 16px;
+        justify-content: center;
+    }
+
+    /* Body needs top padding so card doesn't hide under navbar */
+    body {
+        padding: 80px 1rem 2rem;
+        /* On mobile, fixed BG can be jerky — switch to scroll */
+        background-attachment: scroll;
+        justify-content: flex-start;
+        align-items: stretch;
+    }
+
+    /* Typing text */
+    .typing-text {
+        font-size: 2.4em;
+        border-right-width: 3px;
+    }
+
+    /* Welcome card */
+    .welcome-content {
+        padding: 32px 24px;
+        border-radius: 24px;
+        max-width: 100%;
+        margin: auto;
+    }
+
+    /* Button */
+    .register-button {
+        padding: 14px 32px;
+        font-size: 0.95rem;
+    }
+    /* Disable hover lift on touch */
+    .register-button:hover {
+        transform: none;
+    }
+}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE — SMALL MOBILE  (≤ 480px)
+══════════════════════════════════════════ */
+@media (max-width: 480px) {
+    body {
+        padding: 72px 0.75rem 1.5rem;
+    }
+
+    .typing-text {
+        font-size: 1.9em;
+        /* Shrink ch-width proportionally so text still fits */
+        letter-spacing: -0.01em;
+    }
+
+    /* Keep animation width in sync with smaller font */
+    @keyframes smoothTyping {
+        0%   { width: 0; }
+        35%  { width: 9.5ch; }
+        65%  { width: 9.5ch; }
+        100% { width: 0; }
+    }
+
+    .welcome-content {
+        padding: 24px 18px;
+        border-radius: 20px;
+    }
+
+    .register-button {
+        padding: 13px 26px;
+        font-size: 0.9rem;
+        letter-spacing: 0.5px;
+    }
 }

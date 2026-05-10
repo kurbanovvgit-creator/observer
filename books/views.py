@@ -63,7 +63,7 @@ def ai_chat_view(request):
             return JsonResponse({'reply': f'Ýalňyşlyk: {str(e)}'}, status=500)
 
     return JsonResponse({'error': 'Invalid request'}, status=400)
-
+@csrf_exempt
 def login_view(request):
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -77,7 +77,7 @@ def login_view(request):
         return JsonResponse({'success': False, 'message': 'Неверные данные'})
     return render(request, 'auth.html')
 
-
+@csrf_exempt
 def register_view(request):
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -351,7 +351,7 @@ def profile_view(request):
         'total_likes': total_likes
     })
 
-
+@csrf_exempt
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def profile_update(request):

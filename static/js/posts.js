@@ -125,21 +125,40 @@ function renderPost(post) {
     const catClass = post.category ? ` ig-post__media--cat-${post.category}` : '';
     const likes = post.likes_count || 0;
     const hasPdf = Boolean(post.pdf);
+    const previewUrl = post.preview_url || '';
 
-    const mediaInner = hasPdf
-        ? `<a class="ig-post__media-link" href="${post.pdf}" target="_blank" rel="noopener">
+    let mediaInner;
+    if (previewUrl) {
+        mediaInner = hasPdf
+            ? `<a class="ig-post__media-link ig-post__media-link--preview" href="${post.pdf}" target="_blank" rel="noopener">
+                    <img class="ig-post__preview" src="${CommentsUI.escapeHtml(previewUrl)}" alt="${bookTitle}" loading="lazy" decoding="async" width="720" height="432">
+                    <div class="ig-post__media-overlay">
+                        <span class="ig-post__category-pill">${CommentsUI.escapeHtml(categoryName)}</span>
+                        <span class="ig-post__pdf-hint">${gettext('Kitaby açmak')} →</span>
+                    </div>
+               </a>`
+            : `<div class="ig-post__media-link ig-post__media-link--preview">
+                    <img class="ig-post__preview" src="${CommentsUI.escapeHtml(previewUrl)}" alt="${bookTitle}" loading="lazy" decoding="async" width="720" height="432">
+                    <div class="ig-post__media-overlay">
+                        <span class="ig-post__category-pill">${CommentsUI.escapeHtml(categoryName)}</span>
+                    </div>
+               </div>`;
+    } else if (hasPdf) {
+        mediaInner = `<a class="ig-post__media-link" href="${post.pdf}" target="_blank" rel="noopener">
                 <div class="ig-post__media-inner">
                     <h2 class="ig-post__book-title">${bookTitle}</h2>
                     <span class="ig-post__category-pill">${CommentsUI.escapeHtml(categoryName)}</span>
                     <span class="ig-post__pdf-hint">${gettext('Kitaby açmak')} →</span>
                 </div>
-           </a>`
-        : `<div class="ig-post__media-link">
+           </a>`;
+    } else {
+        mediaInner = `<div class="ig-post__media-link">
                 <div class="ig-post__media-inner">
                     <h2 class="ig-post__book-title">${bookTitle}</h2>
                     <span class="ig-post__category-pill">${CommentsUI.escapeHtml(categoryName)}</span>
                 </div>
            </div>`;
+    }
 
     const likedClass = post.liked_by_me ? ' is-liked' : '';
 

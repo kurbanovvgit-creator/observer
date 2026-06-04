@@ -58,6 +58,7 @@ class PostSerializer(serializers.ModelSerializer):
     author_avatar_url = serializers.SerializerMethodField()
     book_title = serializers.CharField(source='book.title', read_only=True)
     pdf = serializers.SerializerMethodField()  # Кастомное поле для URL PDF
+    preview_url = serializers.SerializerMethodField()
     allow_download = serializers.BooleanField(source='book.allow_download', read_only=True)
     category = serializers.CharField(source='book.category', read_only=True)  # Отображение категории
 
@@ -75,6 +76,11 @@ class PostSerializer(serializers.ModelSerializer):
             return obj.book.pdf.url  # Возвращает полный URL медиафайла из книги
         return None
 
+    def get_preview_url(self, obj):
+        if obj.book and obj.book.preview_image and hasattr(obj.book.preview_image, 'url'):
+            return obj.book.preview_image.url
+        return None
+
     def create(self, validated_data):
         author = validated_data.pop('author')
         book_data = validated_data.pop('book')
@@ -87,7 +93,7 @@ class PostSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'book', 'book_title', 'author', 'author_username', 'author_level',
             'author_avatar_url', 'content', 'created_at', 'likes_count',
-            'allow_download', 'pdf', 'category',
+            'allow_download', 'pdf', 'preview_url', 'category',
         )
 
 class CommentSerializer(serializers.ModelSerializer):

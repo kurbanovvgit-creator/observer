@@ -176,6 +176,44 @@
     position: relative;
 }
 
+.ig-post__media-link--preview {
+    padding: 0;
+    display: block;
+}
+
+.ig-post__preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    display: block;
+    background: var(--surface-2);
+}
+
+.ig-post__media-overlay {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem 0.5rem;
+    padding: 0.5rem 0.65rem;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.65));
+    pointer-events: none;
+}
+
+.ig-post__media-overlay .ig-post__category-pill {
+    margin: 0;
+}
+
+.ig-post__media-overlay .ig-post__pdf-hint {
+    margin: 0;
+    font-size: 0.68rem;
+}
+
 .ig-post__media-link::before {
     content: '';
     position: absolute;

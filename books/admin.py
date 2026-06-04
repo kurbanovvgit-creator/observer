@@ -13,7 +13,7 @@ class ProfileAdmin(admin.ModelAdmin):
 
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
-    list_display = ('title', 'author', 'category', 'created_at', 'allow_download')
+    list_display = ('title', 'author', 'category', 'created_at', 'allow_download', 'preview_image')
     list_filter = ('category', 'allow_download')
     search_fields = ('title', 'author__username')
 

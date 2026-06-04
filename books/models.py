@@ -17,6 +17,7 @@ class Book(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     pdf = models.FileField(upload_to='books/', null=True, blank=True)
+    preview_image = models.ImageField(upload_to='books/previews/', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     category = models.CharField(
         max_length=50,

@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.shortcuts import render, get_object_or_404
 from books.models import Book, Post, Comment, Profile, PostLike
+from books.pdf_preview import refresh_book_preview, delete_book_preview
 from django.contrib.auth.decorators import login_required
 from django.core.files.storage import default_storage
 from rest_framework.decorators import api_view, permission_classes
@@ -146,6 +147,7 @@ def book_create(request):
             if serializer.is_valid():
                 serializer.save(author=request.user)
                 book = serializer.instance
+                refresh_book_preview(book)
                 pdf_path = book.pdf.name if book.pdf else None
                 full_path = book.pdf.url if book.pdf and hasattr(book.pdf, 'url') else None
                 logger.info(
@@ -187,10 +189,14 @@ def book_update(request):
             serializer = BookSerializer(book, data=data, partial=True, context={'request': request})
             if serializer.is_valid():
                 serializer.save()
+                book.refresh_from_db()
+                if 'pdf' in request.FILES:
+                    refresh_book_preview(book)
                 pdf_path = book.pdf.name if book.pdf else None
                 full_path = book.pdf.url if book.pdf and hasattr(book.pdf, 'url') else None
+                preview_url = book.preview_image.url if book.preview_image else None
                 logger.info(f"Book updated with id: {book.id}, pdf_path: {pdf_path}, full_path: {full_path}")
-                return Response({'success': True, 'pdf_url': full_path})
+                return Response({'success': True, 'pdf_url': full_path, 'preview_url': preview_url})
             return Response({'success': False, 'message': serializer.errors}, status=400)
         except Exception as e:
             logger.error(f"Server error: {str(e)}", exc_info=True)
@@ -206,6 +212,7 @@ def book_delete(request):
         book = get_object_or_404(Book, id=book_id, author=request.user)
         if book.pdf and default_storage.exists(book.pdf.name):
             default_storage.delete(book.pdf.name)
+        delete_book_preview(book)
         book.delete()
         logger.info(f"Book deleted with id: {book_id}")
         return Response({'success': True})
@@ -229,7 +236,7 @@ def post_list_view(request):
     search = request.GET.get('search', '').strip()  # ← если потом захочешь поиск по заголовку
 
     # Базовый queryset
-    posts = Post.objects.all().order_by('-id')
+    posts = Post.objects.select_related('book', 'author', 'author__profile').order_by('-id')
 
     # Фильтр по категории
     if category and category.isdigit():

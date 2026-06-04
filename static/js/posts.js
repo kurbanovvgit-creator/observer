@@ -1,4 +1,5 @@
 let currentUsername = null;
+let currentUserAvatar = null;
 let allPosts = [];
 let currentPage = 1;
 let isLoading = false;
@@ -9,6 +10,7 @@ function loadCurrentUser() {
         .then(response => response.json())
         .then(data => {
             currentUsername = data.username;
+            currentUserAvatar = data.avatar || null;
             console.log('Häzirki ulanyjy:', currentUsername);
             loadPosts();
         })
@@ -40,8 +42,13 @@ function loadPosts(reset = false) {
     if (category) url += `&category=${category}`;
     if (searchQuery) url += `&search=${encodeURIComponent(searchQuery)}`;
 
-    fetch(url)
-        .then(r => r.json())
+    fetch(url, { credentials: 'same-origin' })
+        .then((r) => {
+            if (!r.ok) {
+                throw new Error(`HTTP ${r.status}`);
+            }
+            return r.json();
+        })
         .then(data => {
             const posts = data.posts || [];
             if (reset) allPosts = [];
@@ -50,7 +57,7 @@ function loadPosts(reset = false) {
             if (posts.length === 0) {
                 hasMorePosts = false;
                 if (currentPage === 1) {
-                    document.getElementById('post-list').innerHTML = `<p style="text-align:center; padding:40px; color:#999;">${gettext('Postlar tapylmady.')}</p>`;
+                    document.getElementById('post-list').innerHTML = `<p class="ig-post__empty">${gettext('Postlar tapylmady.')}</p>`;
                 } else {
                     showNoMoreMessage();
                 }
@@ -68,48 +75,165 @@ function loadPosts(reset = false) {
             isLoading = false;
         })
         .catch(err => {
-            console.error(err);
+            console.error('Postlar ýüklenende ýalňyşlyk:', err);
+            if (currentPage === 1) {
+                document.getElementById('post-list').innerHTML =
+                    `<p class="ig-post__empty" style="color:var(--danger);">${gettext('Postlar ýüklenende ýalňyşlyk. Sahypany täzeläň.')}</p>`;
+            }
             isLoading = false;
         });
 }
 
+const IG_ICONS = {
+    heart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
+    comment: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>',
+};
+
+function formatPostDate(iso) {
+    if (!iso) return '';
+    try {
+        const d = new Date(iso);
+        return d.toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
+    } catch {
+        return iso;
+    }
+}
+
+function renderPostAvatar(avatarUrl, username) {
+    const name = username || '?';
+    if (avatarUrl) {
+        return `<img class="ig-post__avatar" src="${CommentsUI.escapeHtml(avatarUrl)}" alt="" width="40" height="40" loading="lazy">`;
+    }
+    return `<span class="ig-post__avatar ig-post__avatar--placeholder" aria-hidden="true">${name.charAt(0).toUpperCase()}</span>`;
+}
+
+function countCommentsTree(items) {
+    if (!Array.isArray(items)) return 0;
+    return items.reduce((sum, c) => sum + 1 + countCommentsTree(c.replies || []), 0);
+}
+
 function renderPost(post) {
     const postList = document.getElementById('post-list');
-    const postDiv = document.createElement('div');
-    postDiv.className = 'post';
+    const postEl = document.createElement('article');
+    postEl.className = 'ig-post';
+    postEl.dataset.postId = post.id;
 
-    // Формируем текст для условий PDF
-    const pdfLink = post.pdf
-        ? `<a href="${post.pdf}" target="_blank">${gettext('Kitaby açmak')}</a>${post.allow_download ? ` | <a href="${post.pdf}" download>${gettext('PDF download')}</a>` : ''}`
-        : gettext('PDF ýok');
+    const bookTitle = CommentsUI.escapeHtml(post.book_title || gettext('Ady ýok'));
+    const username = CommentsUI.escapeHtml(post.author_username || '—');
+    const caption = CommentsUI.escapeHtml((post.content || gettext('Mazmun ýok')).trim());
+    const categoryName = getCategoryName(post.category);
+    const catClass = post.category ? ` ig-post__media--cat-${post.category}` : '';
+    const likes = post.likes_count || 0;
+    const hasPdf = Boolean(post.pdf);
 
-    postDiv.innerHTML = `
-        <div class="post-header">
-             <h3>${post.book_title || 'Без названия'} (${gettext("Awtor")}: ${post.author_username || 'Неизвестен'} <span class="author-level">[${gettext("Dereje")} ${post.author_level || 0}]</span>)</h3>
-            <button class="toggle-post" onclick="togglePost(${post.id}, this)">${gettext("Giňişleýin...")}</button>
-        </div>
-        <div class="post-body collapsed" id="post-body-${post.id}">
-            <p>${post.content || gettext('Mazmun ýok')}</p>
-            ${pdfLink}
-            <p>${gettext("Kategoriýa")}: ${getCategoryName(post.category)}</p>
-            <p>${gettext('Like')}: <span id="likes-count-${post.id}">${post.likes_count || 0}</span></p>
-            <button class="like-button" onclick="toggleLike(${post.id}, this)">❤️</button>
-            <div class="comment-list" id="comments-${post.id}"><h4>${gettext('Teswirler')}</h4></div>
-            <div class="comment-form">
-                <input type="text" placeholder="${gettext('Teswir')}">
-                <input type="number" placeholder="${gettext('Setir belgisi')}.">
-                <button onclick="addComment(${post.id}, this)">${gettext('Goşmak')}</button>
+    const mediaInner = hasPdf
+        ? `<a class="ig-post__media-link" href="${post.pdf}" target="_blank" rel="noopener">
+                <div class="ig-post__media-inner">
+                    <h2 class="ig-post__book-title">${bookTitle}</h2>
+                    <span class="ig-post__category-pill">${CommentsUI.escapeHtml(categoryName)}</span>
+                    <span class="ig-post__pdf-hint">${gettext('Kitaby açmak')} →</span>
+                </div>
+           </a>`
+        : `<div class="ig-post__media-link">
+                <div class="ig-post__media-inner">
+                    <h2 class="ig-post__book-title">${bookTitle}</h2>
+                    <span class="ig-post__category-pill">${CommentsUI.escapeHtml(categoryName)}</span>
+                </div>
+           </div>`;
+
+    const likedClass = post.liked_by_me ? ' is-liked' : '';
+
+    const downloadLink = hasPdf && post.allow_download
+        ? ` · <a href="${post.pdf}" download>${gettext('PDF download')}</a>`
+        : '';
+
+    postEl.innerHTML = `
+        <header class="ig-post__head">
+            ${renderPostAvatar(post.author_avatar_url, post.author_username)}
+            <div class="ig-post__user">
+                <p class="ig-post__username">
+                    <span>${username}</span>
+                    <span class="ig-post__badge-level">${gettext('Dereje')} ${post.author_level || 0}</span>
+                </p>
+                <span class="ig-post__subtitle">${bookTitle} · ${CommentsUI.escapeHtml(categoryName)}</span>
             </div>
-        </div>`;
-    postList.appendChild(postDiv);
-    loadComments(post.id, post.author_username);
+        </header>
+        <div class="ig-post__media${catClass}${hasPdf ? '' : ' ig-post__media--no-pdf'}">
+            ${mediaInner}
+        </div>
+        <div class="ig-post__actions">
+            <button type="button" class="ig-post__action ig-post__action--like${likedClass}" onclick="toggleLike(${post.id}, this)" aria-label="${gettext('Like')}" aria-pressed="${post.liked_by_me ? 'true' : 'false'}">
+                ${IG_ICONS.heart}
+            </button>
+            <button type="button" class="ig-post__action ig-post__action--comment" data-comments-toggle="${post.id}" data-post-author="${CommentsUI.escapeHtml(post.author_username || '')}" onclick="toggleCommentsPanel(${post.id})" aria-expanded="false" aria-label="${gettext('Teswirler')}">
+                ${IG_ICONS.comment}
+                <span class="ig-post__action-count" id="comment-count-${post.id}"></span>
+            </button>
+        </div>
+        <div class="ig-post__body">
+            <p class="ig-post__likes"><span id="likes-count-${post.id}">${likes}</span> ${gettext('Like')}</p>
+            <p class="ig-post__caption">
+                <span class="ig-post__caption-user">${username}</span>
+                <span class="ig-post__caption-text">${caption}</span>
+            </p>
+            <p class="ig-post__meta-line">${gettext('Kategoriýa')}: ${CommentsUI.escapeHtml(categoryName)}${downloadLink}</p>
+            <button type="button" class="ig-post__comments-toggle" data-comments-toggle="${post.id}" data-post-author="${CommentsUI.escapeHtml(post.author_username || '')}" onclick="toggleCommentsPanel(${post.id})">
+                ${gettext('Teswirleri gör')}
+            </button>
+            <time class="ig-post__time" datetime="${post.created_at || ''}">${formatPostDate(post.created_at)}</time>
+        </div>
+        <section class="ig-post__comments" id="comments-panel-${post.id}" aria-label="${gettext('Teswirler')}">
+            <div class="comments-stack" id="comments-${post.id}"></div>
+            ${CommentsUI.buildPostComposer(post.id, currentUserAvatar, currentUsername)}
+        </section>`;
+
+    postList.appendChild(postEl);
+    prefetchCommentCount(post.id);
+}
+
+function prefetchCommentCount(postId) {
+    fetch(`/api/comment-list-with-replies/${postId}/`)
+        .then((r) => r.json())
+        .then((data) => updateCommentCount(postId, countCommentsTree(data)))
+        .catch(() => {});
+}
+
+function updateCommentCount(postId, count) {
+    const el = document.getElementById(`comment-count-${postId}`);
+    const toggles = document.querySelectorAll(`[data-comments-toggle="${postId}"]`);
+    if (el) el.textContent = count > 0 ? String(count) : '';
+    toggles.forEach((btn) => {
+        if (btn.classList.contains('ig-post__comments-toggle')) {
+            btn.textContent = count > 0
+                ? `${gettext('Teswirleri gör')} (${count})`
+                : gettext('Teswirleri gör');
+        }
+    });
+}
+
+function toggleCommentsPanel(postId) {
+    const panel = document.getElementById(`comments-panel-${postId}`);
+    if (!panel) return;
+
+    const toggleEl = document.querySelector(`[data-comments-toggle="${postId}"]`);
+    const postAuthorUsername = toggleEl?.dataset.postAuthor || '';
+
+    const isOpen = panel.classList.toggle('is-open');
+    document.querySelectorAll(`[data-comments-toggle="${postId}"]`).forEach((el) => {
+        el.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+
+    if (isOpen && panel.dataset.loaded !== '1') {
+        loadComments(postId, postAuthorUsername);
+        panel.dataset.loaded = '1';
+    }
 }
 
 function showNoMoreMessage() {
     if (document.getElementById('no-more-message')) return;
     const div = document.createElement('div');
     div.id = 'no-more-message';
-    div.innerHTML = `<p style="text-align:center; color:#999; margin:40px 0;">${gettext('Ähli postlar görkezildi')}</p>`;
+    div.innerHTML = `<p class="ig-post__empty">${gettext('Ähli postlar görkezildi')}</p>`;
 
     const container = document.getElementById('load-more-container');
     if (container) container.style.display = 'none';
@@ -130,18 +254,10 @@ function getCategoryName(category) {
     return categories[category] || gettext("Näbelli kategoriýa");
 }
 
-function togglePost(postId, button) {
-    const postBody = document.getElementById(`post-body-${postId}`);
-    if (postBody.classList.contains('collapsed')) {
-        postBody.classList.remove('collapsed');
-        button.textContent = gettext("Gysga");
-    } else {
-        postBody.classList.add('collapsed');
-        button.textContent = gettext("Giňişleýin...");
-    }
-}
-
 function toggleLike(postId, button) {
+    if (button.disabled) return;
+    button.disabled = true;
+
     fetch('/api/like-post/', {
         method: 'POST',
         headers: {
@@ -154,13 +270,18 @@ function toggleLike(postId, button) {
     .then(data => {
         if (data.success) {
             const likesCountElement = document.getElementById(`likes-count-${postId}`);
-            likesCountElement.textContent = data.likes_count;
-            // Обновляем посты, если это необходимо по вашей логике
-            // loadPosts(); // Внимание: полный loadPosts() сбросит скролл, лучше просто обновить цифру
+            if (likesCountElement) likesCountElement.textContent = data.likes_count;
+
+            const liked = data.action === 'added';
+            button.classList.toggle('is-liked', liked);
+            button.setAttribute('aria-pressed', liked ? 'true' : 'false');
         }
     })
     .catch(error => {
         console.error('Like ýalňyşlygy:', error);
+    })
+    .finally(() => {
+        button.disabled = false;
     });
 }
 
@@ -169,9 +290,11 @@ function loadComments(postId, postAuthorUsername) {
         .then(response => response.json())
         .then(data => {
             const commentList = document.getElementById(`comments-${postId}`);
-            commentList.innerHTML = `<h4>${gettext('Teswirler')}</h4>`;
+            commentList.innerHTML = `<h4 class="comments-section-title">${gettext('Teswirler')}</h4>`;
+            const count = countCommentsTree(data);
+            updateCommentCount(postId, count);
             if (!data || data.length === 0) {
-                commentList.innerHTML += `<p>${gettext('Teswir ýok')}.</p>`;
+                commentList.innerHTML += `<p class="comments-empty">${gettext('Teswir ýok')}.</p>`;
             } else {
                 data.forEach(comment => {
                     renderComment(comment, commentList, postId, postAuthorUsername);
@@ -184,69 +307,29 @@ function loadComments(postId, postAuthorUsername) {
 }
 
 function renderComment(comment, parentElement, postId, postAuthorUsername) {
-    const commentDiv = document.createElement('div');
-    commentDiv.className = 'comment' + (comment.replies?.length > 0 ? ' has-replies' : '');
-    if (comment.confirmed) commentDiv.classList.add('confirmed');
-    commentDiv.setAttribute('data-comment-id', comment.id);
+    const wrap = document.createElement('div');
+    wrap.innerHTML = CommentsUI.renderCard(comment, {
+        postId,
+        postAuthorUsername,
+        currentUsername,
+        userAvatar: currentUserAvatar,
+        readOnly: false
+    });
+    const card = wrap.firstElementChild;
+    if (card) parentElement.appendChild(card);
 
-    const isCurrentUser = comment.author_username === currentUsername;
-    const isPostAuthor = currentUsername === postAuthorUsername;
-
-    let actions = '';
-    if (isCurrentUser) {
-        actions += `
-            <div class="comment-actions">
-                <button class="comment-action" onclick="editComment(${postId}, ${comment.id}, this)">${gettext('Üýtget')}</button>
-                <button class="comment-action" onclick="deleteComment(${postId}, ${comment.id})">${gettext('Öçür')}</button>
-            </div>
-            <div class="edit-form" id="edit-form-${postId}-${comment.id}">
-                <input type="text" value="${escapeHtml(comment.content)}">
-                <button onclick="saveEdit(${postId}, ${comment.id}, this)">${gettext('Ýatda saklamak')}</button>
-            </div>`;
-    }
-    if (isPostAuthor && !comment.confirmed) {
-        actions += `<button class="confirm-button" onclick="confirmComment(${postId}, ${comment.id}, this)">${gettext('TASSYKLAMAK')}</button>`;
-    }
-
-    commentDiv.innerHTML = `
-        <img src="${comment.avatar_url || '/static/img/default-avatar.png'}" class="comment-avatar">
-        <div class="comment-content">
-            <p><strong>${comment.author_username}</strong> <span class="author-level">[${comment.author_level || 0}]</span></p>
-            <p>${escapeHtml(comment.content)}</p>
-            ${comment.line_number ? `<p><small>${gettext('Setir')}: ${comment.line_number}</small></p>` : ''}
-            <div class="timestamp">${new Date(comment.created_at).toLocaleString('tm-TM')}</div>
-            ${actions}
-            <button class="toggle-reply" onclick="toggleReplyForm(${postId}, ${comment.id}, this)">${gettext('Jogap ber')}</button>
-            <div class="reply-form" id="reply-form-${postId}-${comment.id}">
-                <input type="text" placeholder="${gettext("Jogabyňyz")}">
-                <button onclick="addReply(${postId}, ${comment.id}, this)">${gettext('Ugratmak')}</button>
-            </div>
-        </div>
-    `;
-
-    parentElement.appendChild(commentDiv);
     if (comment.replies && comment.replies.length > 0) {
         const repliesDiv = document.createElement('div');
-        repliesDiv.className = 'replies';
+        repliesDiv.className = 'comment-replies';
         comment.replies.forEach(reply => renderComment(reply, repliesDiv, postId, postAuthorUsername));
         parentElement.appendChild(repliesDiv);
     }
 }
 
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
-
-function toggleReplyForm(postId, commentId, button) {
-    const form = document.getElementById(`reply-form-${postId}-${commentId}`);
-    if (form) form.classList.toggle('show');
-}
-
 function addReply(postId, parentId, button) {
-    const form = button.parentElement;
-    const content = form.querySelector('input[type="text"]').value;
+    const footer = button.closest('.comment-card__footer');
+    const content = footer.querySelector('textarea').value.trim();
+    if (!content) return;
     fetch('/api/comment-create-with-reply/', {
         method: 'POST',
         headers: {
@@ -258,7 +341,8 @@ function addReply(postId, parentId, button) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            form.querySelector('input[type="text"]').value = '';
+            footer.querySelector('textarea').value = '';
+            CommentsUI.toggleReply(postId, parentId);
             loadComments(postId);
         } else {
             alert(data.message);
@@ -269,10 +353,12 @@ function addReply(postId, parentId, button) {
     });
 }
 
-function addComment(postId, button) {
-    const form = button.parentElement;
-    const content = form.querySelector('input[type="text"]').value;
-    const lineNumber = form.querySelector('input[type="number"]').value;
+function addComment(postId) {
+    const contentEl = document.getElementById(`composer-text-${postId}`);
+    const lineEl = document.getElementById(`composer-line-${postId}`);
+    const content = contentEl ? contentEl.value.trim() : '';
+    const lineNumber = lineEl ? lineEl.value : '';
+    if (!content) return;
     fetch('/api/comment-create-with-reply/', {
         method: 'POST',
         headers: {
@@ -284,8 +370,7 @@ function addComment(postId, button) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            form.querySelector('input[type="text"]').value = '';
-            form.querySelector('input[type="number"]').value = '';
+            CommentsUI.toggleComposer(postId, false);
             loadComments(postId);
         } else {
             alert(data.message);
@@ -320,14 +405,38 @@ function deleteComment(postId, commentId) {
     }
 }
 
-function editComment(postId, commentId, button) {
+function setCommentEditing(postId, commentId, editing) {
     const form = document.getElementById(`edit-form-${postId}-${commentId}`);
-    if (form) form.classList.toggle('show');
+    const card = form ? form.closest('.comment-card') : null;
+    if (!form || !card) return;
+    form.classList.toggle('is-open', editing);
+    card.classList.toggle('is-editing', editing);
+    if (editing) {
+        const textarea = form.querySelector('textarea');
+        if (textarea) textarea.focus();
+    }
 }
 
-function saveEdit(postId, commentId, button) {
-    const form = button.parentElement;
-    const content = form.querySelector('input[type="text"]').value;
+function editComment(postId, commentId) {
+    const form = document.getElementById(`edit-form-${postId}-${commentId}`);
+    if (!form) return;
+    setCommentEditing(postId, commentId, !form.classList.contains('is-open'));
+}
+
+function cancelEdit(postId, commentId) {
+    const form = document.getElementById(`edit-form-${postId}-${commentId}`);
+    if (!form) return;
+    const text = document.getElementById(`edit-text-${postId}-${commentId}`);
+    const original = form.closest('.comment-card')?.querySelector('.comment-card__text');
+    if (text && original) text.value = original.textContent;
+    setCommentEditing(postId, commentId, false);
+}
+
+function saveEdit(postId, commentId) {
+    const form = document.getElementById(`edit-form-${postId}-${commentId}`);
+    if (!form) return;
+    const content = form.querySelector('textarea').value.trim();
+    if (!content) return;
     fetch('/api/comment-update/', {
         method: 'POST',
         headers: {
@@ -339,7 +448,7 @@ function saveEdit(postId, commentId, button) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            form.classList.remove('show');
+            setCommentEditing(postId, commentId, false);
             loadComments(postId);
         } else {
             alert(data.message);
@@ -387,6 +496,12 @@ function getCookie(name) {
         }
     }
     return cookieValue;
+}
+
+let searchDebounceTimer = null;
+function debouncedSearch() {
+    clearTimeout(searchDebounceTimer);
+    searchDebounceTimer = setTimeout(() => loadPosts(true), 350);
 }
 
 window.onload = loadCurrentUser;

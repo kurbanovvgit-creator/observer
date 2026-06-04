@@ -1,45 +1,106 @@
-{% load i18n%}
-{% load static%}
+{% load i18n %}
+
+{% load static %}
+
 <!DOCTYPE html>
+
 <html lang="tk">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title id="auth-page-title">{% trans "Giriş" %} — {% trans "SYNÇY" %}</title>
+
+    <link rel="stylesheet" href="{% static 'css/syncy-ui.css' %}">
+
     <link rel="stylesheet" href="{% static 'css/auth.css' %}">
-    <title>{% trans "Hasaba alyş"%}</title>
+
 </head>
-<body>
-<div class="container">
-    <h2>{% trans "Giriş"%}</h2>
-    <form class="auth-form" id="login-form">
+
+<body
+
+    class="auth-page"
+
+    data-auth-mode="{% if request.resolver_match.url_name == 'register' %}register{% else %}login{% endif %}"
+
+    data-url-login="{% url 'login' %}"
+
+    data-url-register="{% url 'register' %}"
+
+    data-url-home="{% url 'my_books' %}"
+
+>
+
+<main class="auth-shell">
+<div class="auth-card">
+
+    <h2 id="auth-heading">{% trans "Giriş" %}</h2>
+
+    <form class="auth-form" id="login-form" method="post" action="{% url 'login' %}">
+
         <div class="form-group">
-            <input type="text" id="login-username" placeholder="User name" required>
+
+            <input type="text" id="login-username" name="username" placeholder="{% trans 'Ulanyjy ady' %}" required autocomplete="username">
+
         </div>
+
         <div class="form-group">
-            <input type="password" id="login-password" placeholder="Pin" required>
+
+            <input type="password" id="login-password" name="password" placeholder="{% trans 'Parol' %}" required autocomplete="current-password">
+
         </div>
-        <button type="submit">{% trans "Taýýar!"%}</button>
+
+        <button type="submit">{% trans "Giriş" %}</button>
+
     </form>
+
     <div class="switch-link" id="switch-link">
-        {% trans "Ulgamda ýok?"%} <a href="javascript:void(0);" onclick="showRegister()">{% trans "Hasaba alyş"%}</a>
+
+        {% trans "Ulgamda ýok?" %} <a href="{% url 'register' %}">{% trans "Hasaba alyş" %}</a>
+
     </div>
-    <form class="auth-form" id="register-form" style="display: none;">
-        <h2>{% trans "Hasaba alyş" %}</h2>
+
+    <form class="auth-form" id="register-form" style="display: none;" method="post" action="{% url 'register' %}">
+
         <div class="form-group">
-            <input type="text" id="reg-username" placeholder="User name" required>
+
+            <input type="text" id="reg-username" name="username" placeholder="{% trans 'Ulanyjy ady' %}" required autocomplete="username">
+
         </div>
+
         <div class="form-group">
-            <input type="email" id="reg-email" placeholder="E-mail" required>
+
+            <input type="email" id="reg-email" name="email" placeholder="E-mail" required autocomplete="email">
+
         </div>
+
         <div class="form-group">
-            <input type="password" id="reg-password" placeholder="Pin" required>
+
+            <input type="password" id="reg-password" name="password" placeholder="{% trans 'Parol' %}" required autocomplete="new-password">
+
         </div>
-        <button type="submit">Hasaba alyş</button>
+
+        <button type="submit">{% trans "Hasaba alyş" %}</button>
+
     </form>
+
     <div class="switch-link" style="display: none;" id="login-link">
-        Ulgama girilen? <a href="#" onclick="showLogin()">Giriş</a>
+
+        {% trans "Ulgama girilen?" %} <a href="{% url 'login' %}">{% trans "Giriş" %}</a>
+
     </div>
+
 </div>
-</body>
+</main>
+
+<script src="{% url 'javascript-catalog' %}"></script>
+
 <script src="{% static 'js/auth.js' %}"></script>
+
+</body>
+
 </html>
+

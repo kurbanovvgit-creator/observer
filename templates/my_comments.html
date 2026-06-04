@@ -1,17 +1,22 @@
 {% extends 'base.html' %}
-{% load static%}
+{% load static %}
 {% load i18n %}
-{% block link %}
-<link rel="stylesheet" href="{% static  'css/my_comments.css'%}">
-{% endblock %}
+
 {% block title %}{% trans "Meniň teswirlerim" %}{% endblock %}
-{% block content%}
-<div class="content">
-    <h2>{% trans "Meniň teswirlerim!" %}</h2>
-    <div id="comments"></div>
-    <link rel="stylesheet" href="{static 'css/my_comments.css'}">
+
+{% block content %}
+<div class="content my-comments-page" data-page="my-comments">
+    <h2 class="page-title">{% trans "Meniň teswirlerim" %}</h2>
+    <div id="comments" class="my-comments-list" aria-live="polite"></div>
 </div>
 {% endblock %}
-{% block script%}
-<script src="{% static 'js/my_comments.js'%}"></script>
-{%endblock%}
+
+{% block link %}
+<link rel="stylesheet" href="{% static 'css/comments-ui.css' %}">
+<link rel="stylesheet" href="{% static 'css/my_comments.css' %}">
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'js/comments-ui.js' %}"></script>
+<script src="{% static 'js/my_comments.js' %}"></script>
+{% endblock %}

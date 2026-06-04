@@ -16,8 +16,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.text import slugify
 from django.core.paginator import Paginator
 from rest_framework import status
-from django.views.decorators.csrf import csrf_exempt
-import google.generativeai as genai
+
 logger = logging.getLogger(__name__)
 
 
@@ -48,6 +47,8 @@ def ai_chat_view(request):
 
             system_instruction = prompts.get(user_lang, prompts['tk'])
 
+            from google import genai
+
             client = genai.Client(api_key=api_key)
 
             # Используем переменную system_instruction!
@@ -74,7 +75,7 @@ def login_view(request):
             login(request, user)
             Profile.objects.get_or_create(user=user)
             return JsonResponse({'success': True})
-        return JsonResponse({'success': False, 'message': 'Неверные данные'})
+        return JsonResponse({'success': False, 'message': 'Ulanyjy ady ýa-da parol nädogry'})
     return render(request, 'auth.html')
 
 @csrf_exempt
@@ -85,7 +86,7 @@ def register_view(request):
         email = data.get('email')
         password = data.get('password')
         if User.objects.filter(username=username).exists():
-            return JsonResponse({'success': False, 'message': 'Пользователь уже существует'})
+            return JsonResponse({'success': False, 'message': 'Bu ulanyjy ady eýýäm bar'})
         user = User.objects.create_user(username=username, email=email, password=password)
         user.save()
         Profile.objects.create(user=user)
@@ -243,9 +244,17 @@ def post_list_view(request):
     page_obj = paginator.get_page(page)
 
     serializer = PostSerializer(page_obj, many=True, context={'request': request})
+    posts_data = list(serializer.data)
+
+    post_ids = [p['id'] for p in posts_data]
+    liked_ids = set(
+        PostLike.objects.filter(user=request.user, post_id__in=post_ids).values_list('post_id', flat=True)
+    )
+    for post in posts_data:
+        post['liked_by_me'] = post['id'] in liked_ids
 
     return Response({
-        'posts': serializer.data,
+        'posts': posts_data,
         'has_next': page_obj.has_next()  # ← фронт поймёт, есть ли ещё страницы
     })
 
@@ -314,8 +323,13 @@ def my_comments_view(request):
     if request.resolver_match.url_name == 'my_comments':
         return render(request, 'my_comments.html')
 
-    # Если запрос пришел от JavaScript (API)
-    comments = Comment.objects.filter(post__book__author=request.user)
+    # API: все комментарии к постам, которые создал текущий пользователь
+    comments = (
+        Comment.objects.filter(post__author=request.user, parent__isnull=True)
+        .select_related('post', 'post__book', 'post__author', 'author', 'author__profile')
+        .prefetch_related('replies', 'replies__author', 'replies__author__profile')
+        .order_by('-created_at')
+    )
     serializer = CommentSerializer(comments, many=True)
     return Response(serializer.data)
 
@@ -370,7 +384,17 @@ def profile_update(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_current_user(request):
-    return Response({'username': request.user.username})
+    avatar_url = None
+    try:
+        profile = Profile.objects.get(user=request.user)
+        if profile.avatar and hasattr(profile.avatar, 'url'):
+            avatar_url = profile.avatar.url
+    except Profile.DoesNotExist:
+        pass
+    return Response({
+        'username': request.user.username,
+        'avatar': avatar_url,
+    })
 
 
 @api_view(['GET'])

@@ -1,4 +1,37 @@
-// 1. Убрали getLocalizedApiUrl, так как API теперь глобальное (вне i18n_patterns)
+let booksCache = [];
+
+const CATEGORY_KEYS = {
+    '1': 'Kitap',
+    '2': 'Gollanma',
+    '3': 'Okuw maksatnama',
+    '4': 'Ylmy iş',
+    '5': 'Referat',
+    '6': 'Diplom işi',
+    '7': 'Sapak ýazgysy'
+};
+
+function getCategoryLabel(code) {
+    const key = CATEGORY_KEYS[String(code)] || '';
+    return key ? gettext(key) : gettext('Belli däl');
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text || '';
+    return div.innerHTML;
+}
+
+function collapseAddForm() {
+    const details = document.getElementById('add-book-details');
+    if (details) details.open = false;
+}
+
+function clearAddForm() {
+    document.getElementById('book-title').value = '';
+    document.getElementById('book-description').value = '';
+    document.getElementById('book-pdf').value = '';
+    document.getElementById('allow-download').checked = false;
+}
 
 function addBook() {
     const title = document.getElementById('book-title').value.trim();
@@ -7,8 +40,14 @@ function addBook() {
     const pdfInput = document.getElementById('book-pdf');
     const allowDownload = document.getElementById('allow-download').checked;
 
-    if (!title) { alert(gettext("Kitabyň ady hökman bolmaly!")); return; }
-    if (!category) { alert(gettext("Kategoriýa Saýla!")); return; }
+    if (!title) {
+        alert(gettext('Kitabyň ady hökman bolmaly!'));
+        return;
+    }
+    if (!category) {
+        alert(gettext('Kategoriýa Saýla!'));
+        return;
+    }
 
     const formData = new FormData();
     formData.append('title', title);
@@ -19,74 +58,150 @@ function addBook() {
         formData.append('pdf', pdfInput.files[0]);
     }
 
-    // Используем ПРЯМОЙ путь /api/...
     fetch('/api/books/create/', {
         method: 'POST',
         headers: { 'X-CSRFToken': getCookie('csrftoken') },
         body: formData
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            document.getElementById('book-title').value = '';
-            document.getElementById('book-description').value = '';
-            document.getElementById('book-pdf').value = '';
-            document.getElementById('allow-download').checked = false;
-            loadBooks();
-        } else {
-            alert(data.message || gettext("Nädogry maglumatlar"));
-        }
-    })
-    .catch(error => alert('Серверда хаталык: ' + error.message));
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                clearAddForm();
+                collapseAddForm();
+                loadBooks();
+            } else {
+                alert(data.message || gettext('Nädogry maglumatlar'));
+            }
+        })
+        .catch(error => alert('Серверда хаталык: ' + error.message));
+}
+
+function buildCassetteCard(book) {
+    const title = escapeHtml(book.title || gettext('No Title'));
+    const desc = escapeHtml(book.description || '');
+    const cat = getCategoryLabel(book.category);
+    const pdfBlock = book.pdf
+        ? `<a href="${book.pdf}" target="_blank" rel="noopener">${gettext('PDF')}</a>` +
+          (book.allow_download ? ` · <a href="${book.pdf}" download>${gettext('Ýükle')}</a>` : '')
+        : `<span class="cassette-card__no-pdf">${gettext('PDF ýok')}</span>`;
+
+    const article = document.createElement('article');
+    article.className = 'cassette-card';
+    article.dataset.bookId = book.id;
+    article.innerHTML = `
+        <div class="cassette-card__spine"></div>
+        <div class="cassette-card__tape" aria-hidden="true">
+            <span class="cassette-card__hole"></span>
+            <span class="cassette-card__hole"></span>
+        </div>
+        <div class="cassette-card__body">
+            <h3 class="cassette-card__title" title="${title}">${title}</h3>
+            <span class="cassette-card__cat">${escapeHtml(cat)}</span>
+            ${desc ? `<p class="cassette-card__desc">${desc}</p>` : ''}
+            <div class="cassette-card__links">${pdfBlock}</div>
+            <div class="cassette-card__actions">
+                <button type="button" class="btn-edit" onclick="showEditForm(${book.id})">${gettext('Üýtget')}</button>
+                <button type="button" class="btn-delete" onclick="deleteBook(${book.id})">${gettext('Öçür')}</button>
+            </div>
+        </div>
+    `;
+    return article;
+}
+
+function buildEditPanel(book) {
+    const panel = document.createElement('div');
+    panel.className = 'cassette-card__edit';
+    panel.id = `edit-panel-${book.id}`;
+    panel.innerHTML = `
+        <div class="edit-form-inner">
+            <h4>${gettext('Üýtgetmek')}: ${escapeHtml(book.title)}</h4>
+            <input type="text" id="edit-title-${book.id}" value="${escapeHtml(book.title)}" required>
+            <textarea id="edit-description-${book.id}" rows="2">${escapeHtml(book.description)}</textarea>
+            <select id="edit-category-${book.id}">
+                ${[1, 2, 3, 4, 5, 6, 7].map(n => {
+                    const sel = String(book.category) === String(n) ? 'selected' : '';
+                    return `<option value="${n}" ${sel}>${escapeHtml(getCategoryLabel(n))}</option>`;
+                }).join('')}
+            </select>
+            <label class="file-label">
+                <span>${gettext('Täze PDF')}</span>
+                <input type="file" id="edit-pdf-${book.id}" accept="application/pdf">
+            </label>
+            <div class="cassette-card__edit-actions">
+                <button type="button" onclick="updateBook(${book.id})">${gettext('Ýatda sakla')}</button>
+                <button type="button" class="btn-secondary" onclick="hideEditForm(${book.id})">${gettext('Ýatyr')}</button>
+            </div>
+        </div>
+    `;
+    return panel;
 }
 
 function loadBooks() {
-    // Используем ПРЯМОЙ путь /api/...
     fetch('/api/books/', {
         method: 'GET',
         headers: { 'X-CSRFToken': getCookie('csrftoken') }
     })
-    .then(response => {
-        if (!response.ok) throw new Error('Kitaplary ýüklemekde hata boldy');
-        return response.json();
-    })
-    .then(data => {
-        const bookList = document.getElementById('books');
-        if (!bookList) return;
-        bookList.innerHTML = '';
-        data.forEach(book => {
-            const bookDiv = document.createElement('div');
-            bookDiv.className = 'book';
-            bookDiv.innerHTML = `
-                <h3>${book.title || gettext("No Title")}</h3>
-                <p>${book.description || gettext("No Description")}</p>
-                ${book.pdf ? `<a href="${book.pdf}" target="_blank">${gettext('Open a PDF')}</a>${book.allow_download ? ` | <a href="${book.pdf}" class="download-link" download>${gettext('Download a PDF')}</a>` : ''}` : gettext("PDF ýok")}
-                <p>${gettext("Category")}: ${book.category_display || gettext("Belli däl")}</p>
-                <div>
-                    <button class="edit" onclick="showEditForm(${book.id})">${gettext('Üýtgetmek')}</button>
-                    <button class="delete" onclick="deleteBook(${book.id})">${gettext('Öçürmek')}</button>
-                </div>
-                <div class="edit-form" id="edit-form-${book.id}" style="display:none; border:1px solid #ddd; padding:10px; margin-top:10px;">
-                    <input type="text" id="edit-title-${book.id}" value="${book.title.replace(/"/g, '&quot;')}" required>
-                    <textarea id="edit-description-${book.id}">${book.description}</textarea>
-                    <select id="edit-category-${book.id}">
-                        <option value="1" ${book.category == '1' ? 'selected' : ''}>${gettext('Kitap')}</option>
-                        <option value="2" ${book.category == '2' ? 'selected' : ''}>${gettext('Gollanma')}</option>
-                        <option value="3" ${book.category == '3' ? 'selected' : ''}>${gettext('Okuw maksatnama')}</option>
-                        <option value="4" ${book.category == '4' ? 'selected' : ''}>${gettext('Ylmy iş')}</option>
-                        <option value="5" ${book.category == '5' ? 'selected' : ''}>${gettext('Referat')}</option>
-                        <option value="6" ${book.category == '6' ? 'selected' : ''}>${gettext('Diplom işi')}</option>
-                        <option value="7" ${book.category == '7' ? 'selected' : ''}>${gettext('Sapak ýazgysy')}</option>
-                    </select>
-                    <input type="file" id="edit-pdf-${book.id}" accept="application/pdf">
-                    <button onclick="updateBook(${book.id})">${gettext('Ýatda saklamak')}</button>
-                    <button onclick="hideEditForm(${book.id})">${gettext('Ýatyrmak')}</button>
-                </div>
-            `;
-            bookList.appendChild(bookDiv);
-        });
-    })
-    .catch(error => console.error('Error loading books:', error));
+        .then(response => {
+            if (!response.ok) throw new Error('Kitaplary ýüklemekde ýalňyşlyk');
+            return response.json();
+        })
+        .then(data => {
+            const grid = document.getElementById('books');
+            const emptyEl = document.getElementById('books-empty');
+            const countEl = document.getElementById('books-count');
+            if (!grid) return;
+
+            booksCache = data;
+            grid.innerHTML = '';
+            closeAllEditPanels();
+
+            if (!data.length) {
+                if (emptyEl) emptyEl.hidden = false;
+                if (countEl) countEl.hidden = true;
+                return;
+            }
+
+            if (emptyEl) emptyEl.hidden = true;
+            if (countEl) {
+                countEl.hidden = false;
+                countEl.textContent = `${data.length} ${gettext('kitap')}`;
+            }
+
+            data.forEach(book => {
+                grid.appendChild(buildCassetteCard(book));
+            });
+        })
+        .catch(error => console.error('Error loading books:', error));
+}
+
+function closeAllEditPanels() {
+    document.querySelectorAll('.cassette-card__edit.is-open').forEach(el => {
+        el.classList.remove('is-open');
+    });
+}
+
+function showEditForm(bookId) {
+    closeAllEditPanels();
+    const grid = document.getElementById('books');
+    const book = booksCache.find(b => b.id === bookId);
+    if (!book || !grid) return;
+
+    let panel = document.getElementById(`edit-panel-${bookId}`);
+    if (!panel) {
+        panel = buildEditPanel(book);
+        grid.appendChild(panel);
+    } else {
+        grid.appendChild(panel);
+    }
+
+    panel.classList.add('is-open');
+    const scrollBlock = window.matchMedia('(max-width: 768px)').matches ? 'start' : 'nearest';
+    panel.scrollIntoView({ behavior: 'smooth', block: scrollBlock });
+}
+
+function hideEditForm(bookId) {
+    const panel = document.getElementById(`edit-panel-${bookId}`);
+    if (panel) panel.classList.remove('is-open');
 }
 
 function updateBook(bookId) {
@@ -100,7 +215,6 @@ function updateBook(bookId) {
     formData.append('title', title);
     formData.append('description', description);
     formData.append('category', category);
-
     if (pdfInput && pdfInput.files.length > 0) {
         formData.append('pdf', pdfInput.files[0]);
     }
@@ -110,33 +224,37 @@ function updateBook(bookId) {
         headers: { 'X-CSRFToken': getCookie('csrftoken') },
         body: formData
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            hideEditForm(bookId);
-            loadBooks();
-        } else {
-            alert(data.message || 'Hata boldy');
-        }
-    });
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const oldPanel = document.getElementById(`edit-panel-${bookId}`);
+                if (oldPanel) oldPanel.remove();
+                loadBooks();
+            } else {
+                alert(data.message || gettext('Ýalňyşlyk'));
+            }
+        });
 }
 
 function deleteBook(bookId) {
-    if (confirm(gettext("Bu kitaby pozmak isleýärsiňizmi?"))) {
-        const formData = new FormData();
-        formData.append('book_id', bookId);
-        fetch('/api/books/delete/', {
-            method: 'POST',
-            headers: { 'X-CSRFToken': getCookie('csrftoken') },
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => { if (data.success) loadBooks(); });
-    }
-}
+    if (!confirm(gettext('Bu kitaby pozmak isleýärsiňizmi?'))) return;
 
-function showEditForm(id) { document.getElementById(`edit-form-${id}`).style.display = 'block'; }
-function hideEditForm(id) { document.getElementById(`edit-form-${id}`).style.display = 'none'; }
+    const formData = new FormData();
+    formData.append('book_id', bookId);
+    fetch('/api/books/delete/', {
+        method: 'POST',
+        headers: { 'X-CSRFToken': getCookie('csrftoken') },
+        body: formData
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const panel = document.getElementById(`edit-panel-${bookId}`);
+                if (panel) panel.remove();
+                loadBooks();
+            }
+        });
+}
 
 function getCookie(name) {
     let cookieValue = null;

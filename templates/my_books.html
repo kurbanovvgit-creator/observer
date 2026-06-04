@@ -2,45 +2,55 @@
 {% load i18n %}
 {% load static %}
 
+{% block title %}{% trans "Menin kitaphanam" %}{% endblock %}
+
 {% block link %}
 <link rel="stylesheet" href="{% static 'css/my_books.css' %}">
 {% endblock %}
 
-{% block title %}{% trans "Menin kitaphanam"%}{% endblock %}
-
 {% block content %}
-<div class="content">
-    <h2>{% trans "Meniň kitaplarym" %}</h2>
-    <div class="book-form">
-        <h3>{% trans "Kitap goşmak" %}</h3>
-        {% trans "Kitabyň adyny ýaz" as title_placeholder %}
-        <input type="text" id="book-title" placeholder="{{ title_placeholder }}" required>
+<div class="content my-books-page" data-page="my-books">
+    <h2 class="page-title">{% trans "Meniň kitaplarym" %}</h2>
 
-        {% trans "Düşündiriş (zähmet haky ilkinji ýazylmaly!)" as desc_placeholder %}
-        <input type="text" id="book-description" placeholder="{{ desc_placeholder }}">
-
-        <select id="book-category" required>
-            <option value="1">{% trans "Kitap" %}</option>
-            <option value="2">{% trans "Gollanma" %}</option>
-            <option value="3">{% trans "Okuw maksatnama" %}</option>
-            <option value="4">{% trans "Ylmy iş" %}</option>
-            <option value="5">{% trans "Referat" %}</option>
-            <option value="6">{% trans "Diplom işi" %}</option>
-            <option value="7">{% trans "Sapak ýazgysy" %}</option>
-        </select>
-
-        <input type="file" id="book-pdf" accept="application/pdf">
-
-        <div class="toggle-switch">
-            <input type="checkbox" id="allow-download" name="allow_download">
-            <label for="allow-download"></label>
-            <span>{% trans "Ýüklemäne rugsat bermek" %}</span>
+    <details class="add-book-details" id="add-book-details">
+        <summary class="add-book-summary">
+            <span class="add-book-summary__icon" aria-hidden="true">+</span>
+            <span>{% trans "Kitap goşmak" %}</span>
+        </summary>
+        <div class="book-form book-form--add">
+            <div class="book-form__grid">
+                {% trans "Kitabyň ady" as title_placeholder %}
+                <input type="text" id="book-title" placeholder="{{ title_placeholder }}" required>
+                <select id="book-category" required aria-label="{% trans 'Kategoriýa' %}">
+                    <option value="1">{% trans "Kitap" %}</option>
+                    <option value="2">{% trans "Gollanma" %}</option>
+                    <option value="3">{% trans "Okuw maksatnama" %}</option>
+                    <option value="4">{% trans "Ylmy iş" %}</option>
+                    <option value="5">{% trans "Referat" %}</option>
+                    <option value="6">{% trans "Diplom işi" %}</option>
+                    <option value="7">{% trans "Sapak ýazgysy" %}</option>
+                </select>
+                {% trans "Gysga düşündiriş" as desc_placeholder %}
+                <input type="text" id="book-description" placeholder="{{ desc_placeholder }}">
+                <label class="file-label">
+                    <span>{% trans "PDF" %}</span>
+                    <input type="file" id="book-pdf" accept="application/pdf">
+                </label>
+                <label class="toggle-switch" for="allow-download">
+                    <input type="checkbox" id="allow-download" name="allow_download">
+                    <span class="toggle-switch__track" aria-hidden="true"></span>
+                    <span class="toggle-switch__text">{% trans "Ýüklemäge rugsat" %}</span>
+                </label>
+                <button type="button" class="btn-add-submit" onclick="addBook()">{% trans "Kitaby goş" %}</button>
+            </div>
         </div>
+    </details>
 
-        <button onclick="addBook()">{% trans "Kitaby goş"%}</button>
-    </div>
-
-    <div id="books"></div>
+    <section class="my-books-section" aria-label="{% trans 'Kitaplar sanawy' %}">
+        <p class="my-books-count" id="books-count" hidden></p>
+        <div id="books" class="cassette-grid"></div>
+        <p class="cassette-empty" id="books-empty" hidden>{% trans "Entek kitap ýok. «Kitap goşmak» basyň." %}</p>
+    </section>
 </div>
 {% endblock %}
 

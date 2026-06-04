@@ -1,189 +1,242 @@
-/* ── TYPING ANIMATION (SMOOTH) ── */
-.typing-text {
-    font-family: 'Arial', sans-serif;
-    font-size: 4em;
-    font-weight: bold;
-    color: #fff;
-    text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
-    margin-bottom: 20px;
-    white-space: nowrap;
-    overflow: hidden;
-    border-right: 4px solid #fff;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    width: 0;
-    animation:
-        smoothTyping 6s linear infinite,
-        blink 0.5s step-end infinite;
+/* Лендинг SYNÇY */
+
+html {
+
+    font-size: 20px;
+
 }
 
-@keyframes smoothTyping {
-    0%   { width: 0; }
-    35%  { width: 9.5ch; }
-    65%  { width: 9.5ch; }
-    100% { width: 0; }
-}
 
-@keyframes blink {
-    50% { border-color: transparent; }
-}
 
-/* ── BODY ── */
-body {
+body.landing {
+
     margin: 0;
-    padding: 0;
+
     min-height: 100vh;
+
     display: flex;
-    flex-direction: column;
+
     align-items: center;
+
     justify-content: center;
-    background:
-        linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
-        url('/static/images/fon.jpg') no-repeat center center fixed;
+
+    font-family: 'DM Sans', system-ui, sans-serif;
+
+    background-color: #1e140c;
+
+    background-image:
+
+        linear-gradient(rgba(30, 20, 12, 0.55), rgba(20, 12, 6, 0.68)),
+
+        var(--landing-bg, none);
+
+    background-position: center;
+
     background-size: cover;
+
+    background-repeat: no-repeat;
+
+    background-attachment: fixed;
+
+    color: #f6f0e4;
+
+    padding: 1.25rem;
+
 }
 
-/* ── NAVBAR (footer used as top bar) ── */
-footer {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 15px 20px;
-    color: white;
+
+
+.hero {
+
     display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    position: fixed;
-    top: 0;
-    width: 100%;
-    z-index: 1000;
-}
 
-/* ── WELCOME CARD ── */
-.welcome-content {
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 1.75rem;
+
+    width: 100%;
+
+    max-width: 36rem;
+
     text-align: center;
-    padding: 50px;
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(20px);
-    border-radius: 40px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-    width: 100%;
-    max-width: 700px;
-    /* prevent card from touching screen edges */
-    box-sizing: border-box;
+
 }
 
-/* ── REGISTER BUTTON ── */
-.register-button {
-    display: inline-block;
-    padding: 16px 40px;
-    border-radius: 50px;
-    background: linear-gradient(90deg, #4facfe, #00f2fe);
-    color: #fff;
-    text-decoration: none;
-    font-weight: bold;
-    letter-spacing: 1px;
-    transition: all 0.3s ease;
-    /* touch-friendly size */
-    min-height: 52px;
-    min-width: 44px;
+
+
+.typewriter-stage {
+
+    min-height: 4rem;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
 }
+
+
+
+.typewriter-line {
+
+    margin: 0;
+
+    font-family: 'Cormorant Garamond', Georgia, serif;
+
+    font-size: clamp(3rem, 12vw, 4.75rem);
+
+    font-weight: 700;
+
+    color: #f6f0e4;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    text-shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
+
+}
+
+
+
+.typewriter-cursor {
+
+    display: inline-block;
+
+    width: 3px;
+
+    height: 0.85em;
+
+    margin-left: 4px;
+
+    background: #d4a853;
+
+    animation: cursorPulse 1s ease-in-out infinite;
+
+}
+
+
+
+@keyframes cursorPulse {
+
+    50% { opacity: 0.2; }
+
+}
+
+
+
+.tw-char {
+
+    display: inline-block;
+
+    transition: opacity 0.35s ease, transform 0.35s ease, filter 0.3s ease;
+
+}
+
+
+
+.tw-char--enter {
+
+    opacity: 0;
+
+    transform: translateY(0.1em);
+
+    filter: blur(2px);
+
+}
+
+
+
+.tw-char--exit {
+
+    opacity: 0;
+
+    transform: translateY(-0.08em);
+
+}
+
+
+
+.register-button {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: min(100%, 22rem);
+
+    min-height: 3.25rem;
+
+    padding: 0.85rem 1.75rem;
+
+    font-family: 'DM Sans', system-ui, sans-serif;
+
+    font-size: 1.05rem;
+
+    font-weight: 600;
+
+    color: #fff;
+
+    text-decoration: none;
+
+    background: linear-gradient(160deg, #6b4423, #8b5e34);
+
+    border-radius: var(--radius-sm, 8px);
+
+    border: 1px solid rgba(212, 168, 83, 0.35);
+
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.28);
+
+    transition: transform 0.15s, box-shadow 0.15s;
+
+}
+
+
 
 .register-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(0, 242, 254, 0.4);
+
+    transform: translateY(-2px);
+
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.32);
+
 }
 
-/* ══════════════════════════════════════════
-   RESPONSIVE — TABLETS  (≤ 1024px)
-══════════════════════════════════════════ */
-@media (max-width: 1024px) {
-    .typing-text {
-        font-size: 3.2em;
-    }
-    .welcome-content {
-        padding: 40px 35px;
-        max-width: 90%;
-    }
-}
 
-/* ══════════════════════════════════════════
-   RESPONSIVE — MOBILE  (≤ 768px)
-══════════════════════════════════════════ */
-@media (max-width: 768px) {
-    /* Navbar */
-    footer {
-        padding: 12px 16px;
-        justify-content: center;
-    }
 
-    /* Body needs top padding so card doesn't hide under navbar */
-    body {
-        padding: 80px 1rem 2rem;
-        /* On mobile, fixed BG can be jerky — switch to scroll */
-        background-attachment: scroll;
-        justify-content: flex-start;
-        align-items: stretch;
-    }
-
-    /* Typing text */
-    .typing-text {
-        font-size: 2.4em;
-        border-right-width: 3px;
-    }
-
-    /* Welcome card */
-    .welcome-content {
-        padding: 32px 24px;
-        border-radius: 24px;
-        max-width: 100%;
-        margin: auto;
-    }
-
-    /* Button */
-    .register-button {
-        padding: 14px 32px;
-        font-size: 0.95rem;
-    }
-    /* Disable hover lift on touch */
-    .register-button:hover {
-        transform: none;
-    }
-}
-
-/* ══════════════════════════════════════════
-   RESPONSIVE — SMALL MOBILE  (≤ 480px)
-══════════════════════════════════════════ */
 @media (max-width: 480px) {
-    body {
-        padding: 72px 0.75rem 1.5rem;
+
+    body.landing {
+
+        background-attachment: scroll;
+
+        padding: 1rem;
+
     }
 
-    .typing-text {
-        font-size: 1.9em;
-        /* Shrink ch-width proportionally so text still fits */
-        letter-spacing: -0.01em;
+
+
+    .hero {
+
+        gap: 1.35rem;
+
     }
 
-    /* Keep animation width in sync with smaller font */
-    @keyframes smoothTyping {
-        0%   { width: 0; }
-        35%  { width: 9.5ch; }
-        65%  { width: 9.5ch; }
-        100% { width: 0; }
-    }
 
-    .welcome-content {
-        padding: 24px 18px;
-        border-radius: 20px;
-    }
 
     .register-button {
-        padding: 13px 26px;
-        font-size: 0.9rem;
-        letter-spacing: 0.5px;
+
+        width: 100%;
+
+        min-height: 3rem;
+
+        font-size: 1rem;
+
     }
+
 }
+

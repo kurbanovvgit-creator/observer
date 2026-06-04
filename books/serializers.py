@@ -55,6 +55,7 @@ class PostSerializer(serializers.ModelSerializer):
     author = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), write_only=True)
     author_username = serializers.CharField(source='author.username', read_only=True)
     author_level = serializers.SerializerMethodField()
+    author_avatar_url = serializers.SerializerMethodField()
     book_title = serializers.CharField(source='book.title', read_only=True)
     pdf = serializers.SerializerMethodField()  # Кастомное поле для URL PDF
     allow_download = serializers.BooleanField(source='book.allow_download', read_only=True)
@@ -62,6 +63,12 @@ class PostSerializer(serializers.ModelSerializer):
 
     def get_author_level(self, obj):
         return obj.author.profile.level if hasattr(obj.author, 'profile') else 0
+
+    def get_author_avatar_url(self, obj):
+        profile = getattr(obj.author, 'profile', None)
+        if profile and profile.avatar and hasattr(profile.avatar, 'url'):
+            return profile.avatar.url
+        return None
 
     def get_pdf(self, obj):
         if obj.book and obj.book.pdf and hasattr(obj.book.pdf, 'url'):
@@ -77,8 +84,11 @@ class PostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ['id', 'book', 'book_title', 'author', 'author_username', 'author_level', 'content', 'created_at',
-                  'likes_count', 'allow_download', 'pdf', 'category']
+        fields = (
+            'id', 'book', 'book_title', 'author', 'author_username', 'author_level',
+            'author_avatar_url', 'content', 'created_at', 'likes_count',
+            'allow_download', 'pdf', 'category',
+        )
 
 class CommentSerializer(serializers.ModelSerializer):
     author = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), write_only=True)
@@ -86,8 +96,22 @@ class CommentSerializer(serializers.ModelSerializer):
     replies = serializers.SerializerMethodField()
     author_level = serializers.SerializerMethodField()
     confirmed = serializers.BooleanField(default=False)  # Добавляем поле confirmed
-    post_title = serializers.CharField(source='post.content', read_only=True)  # Добавляем поле для заголовка поста
-    post_author = serializers.CharField(source='post.author.username', read_only=True)  # Добавляем автора поста
+    post_title = serializers.SerializerMethodField()
+    post_author = serializers.CharField(source='post.author.username', read_only=True)
+    book_title = serializers.CharField(source='post.book.title', read_only=True)
+    avatar_url = serializers.SerializerMethodField()
+
+    def get_avatar_url(self, obj):
+        profile = getattr(obj.author, 'profile', None)
+        if profile and profile.avatar and hasattr(profile.avatar, 'url'):
+            return profile.avatar.url
+        return None
+
+    def get_post_title(self, obj):
+        if obj.post and obj.post.book:
+            return obj.post.book.title
+        text = (obj.post.content or '').strip() if obj.post else ''
+        return text[:120] if text else '—'
 
     def get_replies(self, obj):
         replies = obj.replies.all().order_by('created_at')
@@ -98,8 +122,11 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = ['id', 'content', 'line_number', 'author', 'author_username', 'author_level', 'confirmed', 'created_at', 
-                  'replies', 'post_title', 'post_author']
+        fields = [
+            'id', 'content', 'line_number', 'author', 'author_username', 'author_level',
+            'confirmed', 'created_at', 'replies', 'post_title', 'post_author', 'book_title',
+            'avatar_url',
+        ]
 
     def create(self, validated_data):
         author = validated_data.pop('author')

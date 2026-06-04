@@ -4,7 +4,15 @@
 <html lang="tk">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title%} {%trans "SYNÇY"%} {% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/syncy-ui.css' %}">
+    <style>
+        :root {
+            --page-bg-image: url("{% static 'images/peter-thomas-he4j9YyWFoo-unsplash.jpg' %}");
+            --page-bg-opacity: 0.15;
+        }
+    </style>
     {%block link%}
     {%endblock%}
 </head>
@@ -19,6 +27,7 @@ THERE IS NO CONTENT
 {% block script%}
 {%endblock%}
 <footer>{% trans "@This WebSite created by Kurbanov Yhlas" %}</footer>
+<script src="{% static 'js/nav.js' %}"></script>
 <script src="{% url 'javascript-catalog' %}"></script>
 </body>
 </html>

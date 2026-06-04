@@ -1,38 +1,42 @@
-{% extends 'base.html'%}
-{% include 'inc/_nav.html'%}
+{% extends 'base.html' %}
 {% load i18n %}
-{% block title%}{% trans 'Posts' %}{% endblock %}
+{% load static %}
+
+{% block title %}{% trans 'Posts' %}{% endblock %}
+
 {% block link %}
-{% load static%}
-<link rel="stylesheet" href="{% static 'css/posts.css' %}">
+<link rel="stylesheet" href="{% static 'css/comments-ui.css' %}">
+<link rel="stylesheet" href="{% static 'css/posts-feed.css' %}">
 {% endblock %}
-{%  block content %}
-<div class="content">
-    <h2>{% trans 'Postlar/bildirişler' %}</h2>
-    <div class="filter-form">
-        <select id="category-filter" onchange="loadPosts(true)">
-            <option value="1">{% trans 'Kitap' %}</option>
-            <option value="2">{% trans 'Gollanma' %}</option>
-            <option value="3">{% trans 'Referat' %}</option>
-            <option value="4">{% trans 'Ylmy iş'%}</option>
-            <option value="5">{% trans 'Konspekt'%}</option>
-            <option value="6">{% trans 'Diplom işi'%}</option>
-            <option value="7">{% trans 'Sapak ýazgylary'%}</option>
-        </select>
-        {% trans "Ady ýa-da Düşündirişi boýunça gözleg et!" as title_placeholder %}
-        <input type="text" id="search-input" placeholder="{{ title_placeholder }}"
-               oninput="debouncedSearch()"/>
-        <button onclick="loadPosts()">{% trans 'Gözle'%}</button>
-    </div>
-    <div id="post-list"></div>
-    <div id="load-more-container" style="text-align:center; margin:40px 0;">
-        <button id="load-more-btn" onclick="loadPosts()" style="padding:12px 32px; font-size:16px; cursor:pointer;">
-            {% trans 'Yene gör'%}
-        </button>
-        <p id="loading-text" style="display:none; color:#666;">{% trans 'Yüklenýär...' %}</p>
+
+{% block content %}
+<div class="content posts-feed-page">
+    <header class="posts-feed-header">
+        <h2 class="page-title">{% trans 'Postlar/bildirişler' %}</h2>
+        <div class="filter-form posts-feed-filters">
+            <select id="category-filter" onchange="loadPosts(true)">
+                <option value="1">{% trans 'Kitap' %}</option>
+                <option value="2">{% trans 'Gollanma' %}</option>
+                <option value="3">{% trans 'Referat' %}</option>
+                <option value="4">{% trans 'Ylmy iş'%}</option>
+                <option value="5">{% trans 'Konspekt'%}</option>
+                <option value="6">{% trans 'Diplom işi'%}</option>
+                <option value="7">{% trans 'Sapak ýazgylary'%}</option>
+            </select>
+            {% trans "Ady ýa-da düşündiriş" as title_placeholder %}
+            <input type="text" id="search-input" placeholder="{{ title_placeholder }}" oninput="debouncedSearch()">
+            <button type="button" onclick="loadPosts(true)">{% trans 'Gözle' %}</button>
+        </div>
+    </header>
+    <div id="post-list" class="posts-feed"></div>
+    <div class="load-more-wrap" id="load-more-container">
+        <button type="button" id="load-more-btn" onclick="loadPosts()">{% trans 'Yene gör' %}</button>
+        <p id="loading-text" style="display:none;">{% trans 'Yüklenýär...' %}</p>
     </div>
 </div>
 {% endblock %}
-{% block script%}
-<script src="{% static 'js/posts.js'%}"></script>
-{%endblock%}
+
+{% block script %}
+<script src="{% static 'js/comments-ui.js' %}"></script>
+<script src="{% static 'js/posts.js' %}"></script>
+{% endblock %}

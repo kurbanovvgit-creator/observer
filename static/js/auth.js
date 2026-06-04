@@ -1,132 +1,138 @@
-// --- ПЕРЕКЛЮЧЕНИЕ ФОРМ ---
-function showRegister() {
-    const loginForm = document.getElementById('login-form');
-    const regForm = document.getElementById('register-form');
-    const loginLink = document.getElementById('login-link');
-    const switchLink = document.getElementById('switch-link');
+(function () {
+    const body = document.body;
+    const urls = {
+        login: body.dataset.urlLogin || '/login/',
+        register: body.dataset.urlRegister || '/register/',
+        home: body.dataset.urlHome || '/my-books/'
+    };
 
-    if (loginForm) loginForm.style.display = 'none';
-    if (regForm) regForm.style.display = 'block';
-    if (loginLink) loginLink.style.display = 'block';
-    if (switchLink) switchLink.style.display = 'none';
-}
+    const TEXT = {
+        loginHeading: 'Giriş',
+        registerHeading: 'Hasaba alyş',
+        loginTitle: 'Giriş',
+        registerTitle: 'Hasaba alyş',
+        loginError: 'Girişde ýalňyşlyk',
+        registerError: 'Hasaba alyşda ýalňyşlyk'
+    };
 
-function showLogin() {
-    const loginForm = document.getElementById('login-form');
-    const regForm = document.getElementById('register-form');
-    const loginLink = document.getElementById('login-link');
-    const switchLink = document.getElementById('switch-link');
+    if (typeof gettext === 'function') {
+        TEXT.loginHeading = gettext('Giriş');
+        TEXT.registerHeading = gettext('Hasaba alyş');
+        TEXT.loginTitle = TEXT.loginHeading;
+        TEXT.registerTitle = TEXT.registerHeading;
+        TEXT.loginError = gettext('Girişde ýalňyşlyk');
+        TEXT.registerError = gettext('Hasaba alyşda ýalňyşlyk');
+    }
 
-    if (regForm) regForm.style.display = 'none';
-    if (loginForm) loginForm.style.display = 'block';
-    if (loginLink) loginLink.style.display = 'none';
-    if (switchLink) switchLink.style.display = 'block';
-}
+    function setAuthMode(mode) {
+        const isRegister = mode === 'register';
+        const loginForm = document.getElementById('login-form');
+        const regForm = document.getElementById('register-form');
+        const loginLink = document.getElementById('login-link');
+        const switchLink = document.getElementById('switch-link');
+        const heading = document.getElementById('auth-heading');
+        const pageTitle = document.getElementById('auth-page-title');
 
-// --- ЛОГИН ---
-const loginFormElement = document.getElementById('login-form');
-if (loginFormElement) {
-    loginFormElement.addEventListener('submit', function(event) {
-        event.preventDefault();
-        const username = document.getElementById('login-username').value;
-        const password = document.getElementById('login-password').value;
+        if (loginForm) loginForm.style.display = isRegister ? 'none' : 'flex';
+        if (regForm) regForm.style.display = isRegister ? 'flex' : 'none';
+        if (loginLink) loginLink.style.display = isRegister ? 'block' : 'none';
+        if (switchLink) switchLink.style.display = isRegister ? 'none' : 'block';
 
-        // ИСПРАВЛЕНО: Прямой путь, чтобы не путать с регистрацией
-        fetch('/login/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCookie('csrftoken')
-            },
-            body: JSON.stringify({ username, password })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Переход в личный кабинет
-                window.location.href = '/my-books/';
-            } else {
-                alert(data.message || 'Girişde ýalňyşlyk');
-            }
-        })
-        .catch(error => console.error('Error:', error));
-    });
-}
+        if (heading) {
+            heading.textContent = isRegister ? TEXT.registerHeading : TEXT.loginHeading;
+        }
+        if (pageTitle) {
+            pageTitle.textContent = (isRegister ? TEXT.registerTitle : TEXT.loginTitle) + ' — SYNÇY';
+        }
+        body.dataset.authMode = mode;
+    }
 
-// --- РЕГИСТРАЦИЯ ---
-const registerFormElement = document.getElementById('register-form');
-if (registerFormElement) {
-    registerFormElement.addEventListener('submit', function(event) {
-        event.preventDefault();
-        const username = document.getElementById('reg-username').value;
-        const email = document.getElementById('reg-email').value;
-        const password = document.getElementById('reg-password').value;
+    window.showRegister = function () {
+        setAuthMode('register');
+        history.replaceState(null, '', urls.register);
+    };
 
-        // ИСПРАВЛЕНО: Прямой путь для регистрации
-        fetch('/register/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCookie('csrftoken')
-            },
-            body: JSON.stringify({ username, email, password })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                window.location.href = '/my-books/';
-            } else {
-                alert(data.message || 'Hasaba alyşda ýalňyşlyk');
-            }
-        })
-        .catch(error => console.error('Error:', error));
-    });
-}
+    window.showLogin = function () {
+        setAuthMode('login');
+        history.replaceState(null, '', urls.login);
+    };
 
-// --- ЗАГРУЗКА ФОНА ---
-const bgUpload = document.getElementById('background-upload');
-if (bgUpload) {
-    bgUpload.addEventListener('change', function(event) {
-        const file = event.target.files[0];
-        if (file) {
-            const formData = new FormData();
-            formData.append('avatar', file);
+    const initialMode = body.dataset.authMode === 'register' ? 'register' : 'login';
+    setAuthMode(initialMode);
 
-            fetch('/api/profile/update/', {
+    const loginFormElement = document.getElementById('login-form');
+    if (loginFormElement) {
+        loginFormElement.addEventListener('submit', function (event) {
+            event.preventDefault();
+            const username = document.getElementById('login-username').value.trim();
+            const password = document.getElementById('login-password').value;
+
+            fetch(urls.login, {
                 method: 'POST',
                 headers: {
+                    'Content-Type': 'application/json',
                     'X-CSRFToken': getCookie('csrftoken')
                 },
-                body: formData
+                body: JSON.stringify({ username, password })
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    const url = URL.createObjectURL(file);
-                    document.body.style.backgroundImage = `url(${url})`;
-                    document.body.style.backgroundSize = 'cover';
-                    document.body.style.backgroundPosition = 'center';
-                } else {
-                    alert('Fon ýüklenende ýalňyşlyk');
-                }
-            })
-            .catch(error => console.error('Error:', error));
-        }
-    });
-}
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        window.location.href = urls.home;
+                    } else {
+                        alert(data.message || TEXT.loginError);
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    alert(TEXT.loginError);
+                });
+        });
+    }
 
-// --- ПОЛУЧЕНИЕ CSRF TOKEN ---
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
+    const registerFormElement = document.getElementById('register-form');
+    if (registerFormElement) {
+        registerFormElement.addEventListener('submit', function (event) {
+            event.preventDefault();
+            const username = document.getElementById('reg-username').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
+            const password = document.getElementById('reg-password').value;
+
+            fetch(urls.register, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({ username, email, password })
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        window.location.href = urls.home;
+                    } else {
+                        alert(data.message || TEXT.registerError);
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    alert(TEXT.registerError);
+                });
+        });
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
             }
         }
+        return cookieValue;
     }
-    return cookieValue;
-}
+})();

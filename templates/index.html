@@ -1,17 +1,44 @@
-{% load i18n%}
+{% load i18n %}
+
 {% load static %}
+
 <!DOCTYPE html>
+
 <html lang="tk">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% trans "Meniň Kitaphanam"%}</title>
+
+    <title>{% trans "SYNÇY" %} — {% trans "Meniň Kitaphanam" %}</title>
+
     <link rel="stylesheet" href="{% static 'css/index.css' %}">
+
 </head>
-<body>
-<div class="typing-text">{% trans "SYNÇY"%}</div>
-<div class="welcome-content">
-    <a href="/register/" class="register-button">{% trans "Registrasiýa geçmek"%}</a>
-</div>
+
+<body class="landing" style="--landing-bg: url('{% static 'images/fon.jpg' %}');">
+
+<main class="hero">
+
+    <div class="typewriter-stage">
+
+        <h1 class="typewriter-line" aria-label="{% trans 'SYNÇY' %}">
+
+            <span id="typewriter-text" data-text="{% trans 'SYNÇY' %}"></span><span class="typewriter-cursor" aria-hidden="true"></span>
+
+        </h1>
+
+    </div>
+
+    <a href="{% url 'register' %}" class="register-button">{% trans "Registrasiýa geçmek" %}</a>
+
+</main>
+
+<script src="{% static 'js/index.js' %}"></script>
+
 </body>
+
 </html>
+

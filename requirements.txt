@@ -2,7 +2,8 @@
 Django>=5.1,<6.0
 djangorestframework>=3.15,<4
 
-# AI assistant (google.genai in books/views.py)
+# AI assistant (google.genai, pydantic_core needs Sentinel)
+typing_extensions>=4.12.0
 google-genai>=1.0
 
 # Images and PDF previews

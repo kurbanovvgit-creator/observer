@@ -26,9 +26,7 @@ def index_view(request):
     return render(request, 'index.html', {'project_name': 'Моя Библиотека'})
 
 
-import json
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
 
 
 @csrf_exempt
@@ -37,8 +35,14 @@ def ai_chat_view(request):
         try:
             data = json.loads(request.body)
             user_message = data.get('message')
-            api_key = data.get('api_key', '')  # Твой ключ
+            api_key = settings.GEMINI_API_KEY
             user_lang = data.get('lang', 'en')
+
+            if not api_key:
+                return JsonResponse(
+                    {'reply': 'AI açary sazlanmady. GEMINI_API_KEY gurnalyň.'},
+                    status=503,
+                )
 
             prompts = {
                 'tk': "Sen 'SYNÇY' kitaphanaçysy. Diňe türkmen dilinde gysga jogap ber.",

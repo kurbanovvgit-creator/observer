@@ -1,5 +1,3 @@
-const MY_GEMINI_API_KEY = "AIzaSyDeFWbOAGwmcMN9SPiI1VxY9NLVpyG1eUI";
-
 function toggleAIChat() {
     const win = document.getElementById('aiWindow');
     if (win) {
@@ -54,8 +52,7 @@ const input = document.getElementById('aiUserInput');
             },
             body: JSON.stringify({
                 message: text,
-                api_key: MY_GEMINI_API_KEY,
-                lang: currentLang // Передаем свежеполученный язык
+                lang: currentLang
             })
         });
 

@@ -44,6 +44,7 @@ class Post(models.Model):
     content = models.TextField(default="")
     created_at = models.DateTimeField(auto_now_add=True)
     likes_count = models.IntegerField(default=0)
+    views_count = models.IntegerField(default=0)
 
     def __str__(self):
         return f"Post by {self.author} on {self.book}"
@@ -72,3 +73,27 @@ class PostLike(models.Model):
 
     def __str__(self):
         return f"{self.user.username} likes {self.post}"
+
+
+class PostView(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='post_views')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('post', 'user')
+
+    def __str__(self):
+        return f"{self.user.username} viewed {self.post_id}"
+
+
+class UserFollow(models.Model):
+    follower = models.ForeignKey(User, on_delete=models.CASCADE, related_name='following_relations')
+    following = models.ForeignKey(User, on_delete=models.CASCADE, related_name='follower_relations')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('follower', 'following')
+
+    def __str__(self):
+        return f"{self.follower.username} → {self.following.username}"

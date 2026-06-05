@@ -27,6 +27,127 @@
     margin-bottom: var(--space-md);
 }
 
+/* ── Author profile page (Instagram-style) ── */
+.author-feed-page .posts-feed-header {
+    display: none;
+}
+
+.author-profile {
+    width: 100%;
+    max-width: var(--feed-width);
+    margin: 0 auto var(--space-lg);
+    padding: var(--space-md);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.author-profile__back {
+    display: inline-block;
+    margin-bottom: var(--space-md);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.author-profile__back:hover {
+    text-decoration: underline;
+}
+
+.author-profile__main {
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+}
+
+.author-profile__avatar-wrap {
+    flex-shrink: 0;
+}
+
+.author-profile__avatar {
+    width: 5.5rem;
+    height: 5.5rem;
+}
+
+.author-profile__username {
+    margin: 0 0 0.35rem;
+    font: 700 1.25rem/1.2 var(--font);
+    color: var(--text);
+    word-break: break-word;
+}
+
+.author-profile__stats {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    line-height: 1.45;
+}
+
+.author-profile__actions {
+    margin-top: var(--space-sm);
+}
+
+.author-follow-btn {
+    min-height: 2rem;
+    padding: 0 1.1rem;
+    font: 600 0.8125rem/1 var(--font);
+    color: #fff;
+    background: var(--primary);
+    border: 1px solid var(--primary);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.author-follow-btn:hover {
+    background: var(--primary-hover);
+}
+
+.author-follow-btn--active {
+    color: var(--primary);
+    background: var(--surface);
+}
+
+.author-follow-btn--active:hover {
+    background: var(--surface-2);
+}
+
+.ig-post__profile-link {
+    display: inline-flex;
+    flex-shrink: 0;
+    border-radius: 50%;
+    text-decoration: none;
+    transition: opacity 0.15s;
+}
+
+.ig-post__profile-link:hover {
+    opacity: 0.85;
+}
+
+.ig-post__username-link {
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.ig-post__username-link:hover {
+    color: var(--primary);
+    text-decoration: underline;
+}
+
+.ig-post__caption-user {
+    font-weight: 700;
+    margin-right: 0.35rem;
+    color: var(--text);
+    text-decoration: none;
+}
+
+a.ig-post__caption-user:hover {
+    color: var(--primary);
+}
+
 .posts-feed-header {
     width: 100%;
     max-width: var(--feed-width);
@@ -60,10 +181,33 @@
     padding-bottom: var(--space-xl);
 }
 
-.posts-feed .load-more-wrap {
+.posts-feed .load-more-wrap,
+.author-feed-page .load-more-wrap {
     width: 100%;
     max-width: var(--feed-width);
     margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-md) 0 var(--space-lg);
+}
+
+.feed-pagination__info {
+    margin: 0;
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+.feed-pagination__loading {
+    margin: 0;
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+}
+
+.load-more-wrap #load-more-btn {
+    min-width: 10rem;
 }
 
 /* ── Post card ── */
@@ -431,6 +575,19 @@
 
     .posts-feed-header {
         padding: 0 var(--space-sm);
+    }
+
+    .author-profile {
+        padding: var(--space-md) var(--space-sm);
+    }
+
+    .author-profile__main {
+        gap: var(--space-md);
+    }
+
+    .author-profile__avatar {
+        width: 4.5rem;
+        height: 4.5rem;
     }
 
     .ig-post__media {

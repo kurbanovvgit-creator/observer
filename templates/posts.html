@@ -11,6 +11,12 @@
 
 {% block content %}
 <div class="content posts-feed-page">
+    <div
+        id="posts-feed-config"
+        data-mode="all"
+        data-author-url-tpl="{% url 'author_feed' username='0' %}"
+        hidden
+    ></div>
     <header class="posts-feed-header">
         <h2 class="page-title">{% trans 'Postlar/bildirişler' %}</h2>
         <div class="filter-form posts-feed-filters">
@@ -30,8 +36,9 @@
     </header>
     <div id="post-list" class="posts-feed"></div>
     <div class="load-more-wrap" id="load-more-container">
+        <p class="feed-pagination__info" id="feed-pagination-info" hidden></p>
         <button type="button" id="load-more-btn" onclick="loadPosts()">{% trans 'Yene gör' %}</button>
-        <p id="loading-text" style="display:none;">{% trans 'Yüklenýär...' %}</p>
+        <p class="feed-pagination__loading" id="loading-text" hidden>{% trans 'Yüklenýär...' %}</p>
     </div>
 </div>
 {% endblock %}

@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
 
-from .models import Book, Post, Comment, PostLike, Profile
+from .models import Book, Post, Comment, PostLike, PostView, UserFollow, Profile
 
 
 @admin.register(Profile)
@@ -20,7 +20,7 @@ class BookAdmin(admin.ModelAdmin):
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    list_display = ('id', 'book', 'author', 'likes_count', 'created_at')
+    list_display = ('id', 'book', 'author', 'likes_count', 'views_count', 'created_at')
     list_filter = ('created_at',)
     search_fields = ('content', 'book__title', 'author__username')
 
@@ -36,3 +36,15 @@ class CommentAdmin(admin.ModelAdmin):
 class PostLikeAdmin(admin.ModelAdmin):
     list_display = ('post', 'user', 'created_at')
     list_filter = ('created_at',)
+
+
+@admin.register(PostView)
+class PostViewAdmin(admin.ModelAdmin):
+    list_display = ('post', 'user', 'created_at')
+    list_filter = ('created_at',)
+
+
+@admin.register(UserFollow)
+class UserFollowAdmin(admin.ModelAdmin):
+    list_display = ('follower', 'following', 'created_at')
+    search_fields = ('follower__username', 'following__username')

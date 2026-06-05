@@ -92,7 +92,7 @@ class PostSerializer(serializers.ModelSerializer):
         model = Post
         fields = (
             'id', 'book', 'book_title', 'author', 'author_username', 'author_level',
-            'author_avatar_url', 'content', 'created_at', 'likes_count',
+            'author_avatar_url', 'content', 'created_at', 'likes_count', 'views_count',
             'allow_download', 'pdf', 'preview_url', 'category',
         )
 

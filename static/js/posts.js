@@ -4,6 +4,45 @@ let allPosts = [];
 let currentPage = 1;
 let isLoading = false;
 let hasMorePosts = true;
+const recordedViewPostIds = new Set();
+
+const feedConfig = {
+    mode: 'all',
+    authorUsername: null,
+    authorUrlTpl: '',
+};
+
+function readFeedConfig() {
+    const el = document.getElementById('posts-feed-config');
+    if (!el) return;
+    feedConfig.mode = el.dataset.mode || 'all';
+    feedConfig.authorUsername = el.dataset.authorUsername || null;
+    feedConfig.authorUrlTpl = el.dataset.authorUrlTpl || '';
+}
+
+function authorProfileUrl(username) {
+    if (!username) return '#';
+    const tpl = feedConfig.authorUrlTpl;
+    if (tpl && tpl.includes('/0/')) {
+        return tpl.replace('/0/', `/${encodeURIComponent(username)}/`);
+    }
+    if (tpl && tpl.endsWith('/0/')) {
+        return tpl.slice(0, -2) + `${encodeURIComponent(username)}/`;
+    }
+    return `/user/${encodeURIComponent(username)}/`;
+}
+
+function buildPostsApiUrl(page) {
+    if (feedConfig.mode === 'author' && feedConfig.authorUsername) {
+        return `/api/users/${encodeURIComponent(feedConfig.authorUsername)}/posts/?page=${page}`;
+    }
+    const category = document.getElementById('category-filter')?.value;
+    const searchQuery = document.getElementById('search-input')?.value || '';
+    let url = `/api/posts/?page=${page}`;
+    if (category) url += `&category=${category}`;
+    if (searchQuery) url += `&search=${encodeURIComponent(searchQuery)}`;
+    return url;
+}
 
 function loadCurrentUser() {
     fetch('/api/get-current-user/')
@@ -12,11 +51,125 @@ function loadCurrentUser() {
             currentUsername = data.username;
             currentUserAvatar = data.avatar || null;
             console.log('Häzirki ulanyjy:', currentUsername);
+            if (feedConfig.mode === 'author') {
+                loadAuthorProfile();
+            }
             loadPosts();
         })
         .catch(error => {
             console.error('Häzirki ulanyjy ýüklenende ýalňyşlyk:', error);
         });
+}
+
+function loadAuthorProfile() {
+    const username = feedConfig.authorUsername;
+    if (!username) return;
+
+    fetch(`/api/users/${encodeURIComponent(username)}/`, { credentials: 'same-origin' })
+        .then((r) => {
+            if (!r.ok) throw new Error(`HTTP ${r.status}`);
+            return r.json();
+        })
+        .then((data) => {
+            const nameEl = document.getElementById('author-profile-username');
+            const statsEl = document.getElementById('author-profile-stats');
+            const avatarWrap = document.getElementById('author-profile-avatar');
+            if (nameEl) nameEl.textContent = data.username;
+
+            if (statsEl) {
+                statsEl.textContent =
+                    `${data.post_count} ${gettext('Post')} · ${data.followers_count || 0} ${gettext('Yazylan')} · ${data.following_count || 0} ${gettext('Yazylýan')} · ${gettext('Dereje')} ${data.level || 0}`;
+            }
+
+            renderAuthorFollowButton(data);
+
+            if (avatarWrap) {
+                if (data.avatar_url) {
+                    avatarWrap.innerHTML =
+                        `<img class="ig-post__avatar author-profile__avatar" src="${CommentsUI.escapeHtml(data.avatar_url)}" alt="" width="88" height="88" loading="lazy">`;
+                } else {
+                    const initial = (data.username || '?').charAt(0).toUpperCase();
+                    avatarWrap.innerHTML =
+                        `<span class="ig-post__avatar ig-post__avatar--placeholder author-profile__avatar" aria-hidden="true">${initial}</span>`;
+                }
+            }
+
+        })
+        .catch((err) => console.error('Profil ýüklenende ýalňyşlyk:', err));
+}
+
+function renderAuthorFollowButton(profile) {
+    const wrap = document.getElementById('author-profile-actions');
+    if (!wrap) return;
+
+    if (profile.is_self) {
+        wrap.innerHTML = '';
+        return;
+    }
+
+    const following = Boolean(profile.is_following);
+    wrap.innerHTML = `
+        <button
+            type="button"
+            class="author-follow-btn${following ? ' author-follow-btn--active' : ''}"
+            id="author-follow-btn"
+            onclick="toggleFollow('${CommentsUI.escapeHtml(profile.username)}', this)"
+            aria-pressed="${following ? 'true' : 'false'}"
+        >
+            ${following ? gettext('Yazylýarsyňyz') : gettext('Yazyl')}
+        </button>`;
+}
+
+function toggleFollow(username, button) {
+    if (!username || !button) return;
+    button.disabled = true;
+
+    fetch('/api/follow/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken'),
+        },
+        body: JSON.stringify({ username }),
+    })
+        .then((r) => r.json())
+        .then((data) => {
+            if (!data.success) {
+                alert(data.message || gettext('Ýalňyşlyk'));
+                return;
+            }
+            const following = Boolean(data.following);
+            button.classList.toggle('author-follow-btn--active', following);
+            button.setAttribute('aria-pressed', following ? 'true' : 'false');
+            button.textContent = following ? gettext('Yazylýarsyňyz') : gettext('Yazyl');
+            loadAuthorProfile();
+        })
+        .catch((err) => console.error('Yazylmakda ýalňyşlyk:', err))
+        .finally(() => {
+            button.disabled = false;
+        });
+}
+
+function recordPostView(postId) {
+    if (!postId || recordedViewPostIds.has(postId)) return;
+    recordedViewPostIds.add(postId);
+
+    fetch('/api/post-view/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken'),
+        },
+        body: JSON.stringify({ post_id: postId }),
+    })
+        .then((r) => r.json())
+        .then((data) => {
+            if (data.success) {
+                const el = document.getElementById(`views-count-${postId}`);
+                if (el) el.textContent = data.views_count;
+            }
+        })
+        .catch(() => {});
 }
 
 function loadPosts(reset = false) {
@@ -26,21 +179,23 @@ function loadPosts(reset = false) {
         currentPage = 1;
         hasMorePosts = true;
         document.getElementById('post-list').innerHTML = '';
+        clearNoMoreMessage();
         const container = document.getElementById('load-more-container');
-        if (container) container.style.display = 'block';
-        const nomore = document.getElementById('no-more-message');
-        if (nomore) nomore.remove();
+        if (container) container.style.display = '';
+        const btn = document.getElementById('load-more-btn');
+        if (btn) {
+            btn.hidden = false;
+            btn.style.display = '';
+        }
+        const info = document.getElementById('feed-pagination-info');
+        if (info) info.hidden = true;
     }
 
     if (!hasMorePosts) return;
 
     isLoading = true;
-    const category = document.getElementById('category-filter').value;
-    const searchQuery = document.getElementById('search-input').value;
-
-    let url = `/api/posts/?page=${currentPage}`;
-    if (category) url += `&category=${category}`;
-    if (searchQuery) url += `&search=${encodeURIComponent(searchQuery)}`;
+    setPaginationLoading(true);
+    const url = buildPostsApiUrl(currentPage);
 
     fetch(url, { credentials: 'same-origin' })
         .then((r) => {
@@ -61,18 +216,27 @@ function loadPosts(reset = false) {
                 } else {
                     showNoMoreMessage();
                 }
+                updateFeedPagination(data, 0);
                 isLoading = false;
+                setPaginationLoading(false);
                 return;
             }
 
             posts.forEach(post => renderPost(post));
 
+            const loadedPage = currentPage;
             hasMorePosts = data.has_next === true;
             currentPage++;
 
-            if (!hasMorePosts) showNoMoreMessage();
+            updateFeedPagination(data, loadedPage);
+            if (!hasMorePosts) {
+                showNoMoreMessage();
+            } else {
+                clearNoMoreMessage();
+            }
 
             isLoading = false;
+            setPaginationLoading(false);
         })
         .catch(err => {
             console.error('Postlar ýüklenende ýalňyşlyk:', err);
@@ -81,7 +245,49 @@ function loadPosts(reset = false) {
                     `<p class="ig-post__empty" style="color:var(--danger);">${gettext('Postlar ýüklenende ýalňyşlyk. Sahypany täzeläň.')}</p>`;
             }
             isLoading = false;
+            setPaginationLoading(false);
+            updateFeedPagination(null, 0);
         });
+}
+
+function setPaginationLoading(loading) {
+    const loadingEl = document.getElementById('loading-text');
+    const btn = document.getElementById('load-more-btn');
+    if (loadingEl) loadingEl.hidden = !loading;
+    if (btn) btn.disabled = loading;
+}
+
+function updateFeedPagination(data, loadedPage) {
+    const container = document.getElementById('load-more-container');
+    const btn = document.getElementById('load-more-btn');
+    const info = document.getElementById('feed-pagination-info');
+
+    if (!container) return;
+
+    const totalPages = data?.total_pages || 0;
+    const totalCount = data?.total_count ?? 0;
+    const hasNext = Boolean(data?.has_next);
+    const page = loadedPage || data?.page || 1;
+
+    if (info) {
+        if (totalPages > 1) {
+            info.textContent = `${gettext('Sahypa')} ${page} / ${totalPages} · ${totalCount} ${gettext('Post')}`;
+            info.hidden = false;
+        } else if (totalCount > 0) {
+            info.textContent = `${totalCount} ${gettext('Post')}`;
+            info.hidden = false;
+        } else {
+            info.hidden = true;
+        }
+    }
+
+    if (btn) btn.hidden = !hasNext;
+    container.hidden = !hasNext;
+}
+
+function clearNoMoreMessage() {
+    const nomore = document.getElementById('no-more-message');
+    if (nomore) nomore.remove();
 }
 
 const IG_ICONS = {
@@ -119,11 +325,15 @@ function renderPost(post) {
     postEl.dataset.postId = post.id;
 
     const bookTitle = CommentsUI.escapeHtml(post.book_title || gettext('Ady ýok'));
-    const username = CommentsUI.escapeHtml(post.author_username || '—');
+    const rawUsername = post.author_username || '—';
+    const username = CommentsUI.escapeHtml(rawUsername);
+    const profileUrl = authorProfileUrl(rawUsername);
+    const profileHref = CommentsUI.escapeHtml(profileUrl);
     const caption = CommentsUI.escapeHtml((post.content || gettext('Mazmun ýok')).trim());
     const categoryName = getCategoryName(post.category);
     const catClass = post.category ? ` ig-post__media--cat-${post.category}` : '';
     const likes = post.likes_count || 0;
+    const views = post.views_count || 0;
     const hasPdf = Boolean(post.pdf);
     const previewUrl = post.preview_url || '';
 
@@ -166,12 +376,20 @@ function renderPost(post) {
         ? ` · <a href="${post.pdf}" download>${gettext('PDF download')}</a>`
         : '';
 
+    const avatarBlock = rawUsername !== '—'
+        ? `<a href="${profileHref}" class="ig-post__profile-link">${renderPostAvatar(post.author_avatar_url, post.author_username)}</a>`
+        : renderPostAvatar(post.author_avatar_url, post.author_username);
+
+    const usernameBlock = rawUsername !== '—'
+        ? `<a href="${profileHref}" class="ig-post__username-link">${username}</a>`
+        : `<span>${username}</span>`;
+
     postEl.innerHTML = `
         <header class="ig-post__head">
-            ${renderPostAvatar(post.author_avatar_url, post.author_username)}
+            ${avatarBlock}
             <div class="ig-post__user">
                 <p class="ig-post__username">
-                    <span>${username}</span>
+                    ${usernameBlock}
                     <span class="ig-post__badge-level">${gettext('Dereje')} ${post.author_level || 0}</span>
                 </p>
                 <span class="ig-post__subtitle">${bookTitle} · ${CommentsUI.escapeHtml(categoryName)}</span>
@@ -190,9 +408,14 @@ function renderPost(post) {
             </button>
         </div>
         <div class="ig-post__body">
-            <p class="ig-post__likes"><span id="likes-count-${post.id}">${likes}</span> ${gettext('Like')}</p>
+            <p class="ig-post__likes">
+                <span id="likes-count-${post.id}">${likes}</span> ${gettext('Like')}
+                · <span id="views-count-${post.id}">${views}</span> ${gettext('Görnüş')}
+            </p>
             <p class="ig-post__caption">
-                <span class="ig-post__caption-user">${username}</span>
+                ${rawUsername !== '—'
+                    ? `<a href="${profileHref}" class="ig-post__caption-user">${username}</a>`
+                    : `<span class="ig-post__caption-user">${username}</span>`}
                 <span class="ig-post__caption-text">${caption}</span>
             </p>
             <p class="ig-post__meta-line">${gettext('Kategoriýa')}: ${CommentsUI.escapeHtml(categoryName)}${downloadLink}</p>
@@ -208,6 +431,7 @@ function renderPost(post) {
 
     postList.appendChild(postEl);
     prefetchCommentCount(post.id);
+    recordPostView(post.id);
 }
 
 function prefetchCommentCount(postId) {
@@ -257,7 +481,8 @@ function showNoMoreMessage() {
     const container = document.getElementById('load-more-container');
     if (container) container.style.display = 'none';
 
-    document.getElementById('post-list').after(div);
+    const postList = document.getElementById('post-list');
+    if (postList) postList.after(div);
 }
 
 function getCategoryName(category) {
@@ -523,13 +748,20 @@ function debouncedSearch() {
     searchDebounceTimer = setTimeout(() => loadPosts(true), 350);
 }
 
-window.onload = loadCurrentUser;
+function initPostsPage() {
+    readFeedConfig();
+    loadCurrentUser();
 
-window.addEventListener('scroll', () => {
-    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 1000 && !isLoading && hasMorePosts) {
-        loadPosts();
+    window.addEventListener('scroll', () => {
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 1000 && !isLoading && hasMorePosts) {
+            loadPosts();
+        }
+    });
+
+    const categoryFilter = document.querySelector('#category-filter');
+    if (categoryFilter) {
+        categoryFilter.onchange = () => loadPosts(true);
     }
-});
+}
 
-// События фильтрации
-document.querySelector('#category-filter').onchange = () => loadPosts(true);
+window.onload = initPostsPage;

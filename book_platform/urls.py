@@ -26,6 +26,8 @@ urlpatterns = [
     path('api/books/update/', views.book_update, name='book_update'),
     path('api/books/delete/', views.book_delete, name='book_delete'),
     path('api/posts/', views.post_list_view, name='api_post_list'),
+    path('api/users/<str:username>/', views.author_profile_api, name='api_author_profile'),
+    path('api/users/<str:username>/posts/', views.author_posts_api, name='api_author_posts'),
     path('api/comments/', views.comment_create, name='comment_create'),
     path('api/comments/<int:post_id>/', views.comment_list, name='comment_list'),
     path('api/comments/mine/', views.my_comments_view, name='api_my_comments'),
@@ -37,6 +39,8 @@ urlpatterns = [
     path('api/comment-update/', views.comment_update, name='comment_update'),
     path('api/get-current-user/', views.get_current_user, name='get_current_user'),
     path('api/like-post/', views.like_post, name='like_post'),
+    path('api/post-view/', views.record_post_view, name='record_post_view'),
+    path('api/follow/', views.toggle_follow, name='toggle_follow'),
     path('api/confirm-comment/', views.confirm_comment, name='confirm_comment'),
 ]
 
@@ -46,6 +50,7 @@ urlpatterns += i18n_patterns(
     path('', views.index_view, name='index'),
     path('my-books/', views.book_list_view, name='my_books'),
     path('posts/', views.all_books_view, name='posts'),
+    path('user/<str:username>/', views.author_feed_view, name='author_feed'),
     path('my-comments/', views.my_comments_view, name='my_comments'),
     path('profile/', views.profile_view, name='profile'),
     path('jsi18n/', JavaScriptCatalog.as_view(), name='javascript-catalog'),

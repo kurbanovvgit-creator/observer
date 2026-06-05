@@ -2,7 +2,8 @@ from django.http import JsonResponse
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.shortcuts import render, get_object_or_404
-from books.models import Book, Post, Comment, Profile, PostLike
+from books.models import Book, Post, Comment, Profile, PostLike, PostView, UserFollow
+from django.db.models import F
 from books.pdf_preview import refresh_book_preview, delete_book_preview
 from django.contrib.auth.decorators import login_required
 from django.core.files.storage import default_storage
@@ -228,28 +229,9 @@ def all_books_view(request):
     return Response({'success': False, 'message': 'Метод не поддерживается'}, status=405)
 
 
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def post_list_view(request):
-    category = request.GET.get('category', None)
-    page = request.GET.get('page', 1)  # ← НОВАЯ СТРОЧКА
-    search = request.GET.get('search', '').strip()  # ← если потом захочешь поиск по заголовку
-
-    # Базовый queryset
-    posts = Post.objects.select_related('book', 'author', 'author__profile').order_by('-id')
-
-    # Фильтр по категории
-    if category and category.isdigit():
-        posts = posts.filter(book__category=int(category))
-
-    # Поиск по названию книги (по желанию — можно включить потом)
-    if search:
-        posts = posts.filter(book__title__icontains=search)
-
-    # ПАГИНАЦИЯ — вот и всё волшебство!
-    paginator = Paginator(posts, 3)
+def _paginated_posts_response(request, queryset, page):
+    paginator = Paginator(queryset, 3)
     page_obj = paginator.get_page(page)
-
     serializer = PostSerializer(page_obj, many=True, context={'request': request})
     posts_data = list(serializer.data)
 
@@ -262,7 +244,120 @@ def post_list_view(request):
 
     return Response({
         'posts': posts_data,
-        'has_next': page_obj.has_next()  # ← фронт поймёт, есть ли ещё страницы
+        'has_next': page_obj.has_next(),
+        'has_previous': page_obj.has_previous(),
+        'page': page_obj.number,
+        'total_pages': paginator.num_pages,
+        'total_count': paginator.count,
+    })
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def post_list_view(request):
+    category = request.GET.get('category', None)
+    page = request.GET.get('page', 1)
+    search = request.GET.get('search', '').strip()
+
+    posts = Post.objects.select_related('book', 'author', 'author__profile').order_by('-id')
+
+    if category and category.isdigit():
+        posts = posts.filter(book__category=int(category))
+
+    if search:
+        posts = posts.filter(book__title__icontains=search)
+
+    return _paginated_posts_response(request, posts, page)
+
+
+@login_required
+def author_feed_view(request, username):
+    get_object_or_404(User, username=username)
+    return render(request, 'author_feed.html', {'author_username': username})
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def author_profile_api(request, username):
+    author = get_object_or_404(User, username=username)
+    profile, _ = Profile.objects.get_or_create(user=author)
+    avatar_url = profile.avatar.url if profile.avatar and hasattr(profile.avatar, 'url') else None
+    post_count = Post.objects.filter(author=author).count()
+    total_likes = Post.objects.filter(author=author).aggregate(
+        total_likes=Sum('likes_count')
+    )['total_likes'] or 0
+    total_views = Post.objects.filter(author=author).aggregate(
+        total_views=Sum('views_count')
+    )['total_views'] or 0
+    followers_count = UserFollow.objects.filter(following=author).count()
+    following_count = UserFollow.objects.filter(follower=author).count()
+    is_following = False
+    if request.user.id != author.id:
+        is_following = UserFollow.objects.filter(
+            follower=request.user, following=author
+        ).exists()
+
+    return Response({
+        'username': author.username,
+        'avatar_url': avatar_url,
+        'level': profile.level,
+        'post_count': post_count,
+        'total_likes': total_likes,
+        'total_views': total_views,
+        'followers_count': followers_count,
+        'following_count': following_count,
+        'is_following': is_following,
+        'is_self': request.user.id == author.id,
+    })
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def author_posts_api(request, username):
+    author = get_object_or_404(User, username=username)
+    page = request.GET.get('page', 1)
+    posts = Post.objects.filter(author=author).select_related(
+        'book', 'author', 'author__profile'
+    ).order_by('-id')
+    return _paginated_posts_response(request, posts, page)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def record_post_view(request):
+    post_id = request.data.get('post_id')
+    if not post_id:
+        return Response({'success': False, 'message': 'post_id required'}, status=400)
+    post = get_object_or_404(Post, id=post_id)
+    view, created = PostView.objects.get_or_create(post=post, user=request.user)
+    if created:
+        Post.objects.filter(pk=post.pk).update(views_count=F('views_count') + 1)
+        post.refresh_from_db()
+    return Response({'success': True, 'views_count': post.views_count})
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def toggle_follow(request):
+    username = request.data.get('username')
+    if not username:
+        return Response({'success': False, 'message': 'username required'}, status=400)
+    target = get_object_or_404(User, username=username)
+    if target.id == request.user.id:
+        return Response({'success': False, 'message': 'Cannot follow yourself'}, status=400)
+
+    follow = UserFollow.objects.filter(follower=request.user, following=target).first()
+    if follow:
+        follow.delete()
+        following = False
+    else:
+        UserFollow.objects.create(follower=request.user, following=target)
+        following = True
+
+    return Response({
+        'success': True,
+        'following': following,
+        'followers_count': UserFollow.objects.filter(following=target).count(),
     })
 
 

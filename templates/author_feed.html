@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{{ author_username }} — {% trans 'Postlar' %}{% endblock %}
+
+{% block link %}
+<link rel="stylesheet" href="{% static 'css/comments-ui.css' %}">
+<link rel="stylesheet" href="{% static 'css/posts-feed.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="content posts-feed-page author-feed-page">
+    <div
+        id="posts-feed-config"
+        data-mode="author"
+        data-author-username="{{ author_username }}"
+        data-author-url-tpl="{% url 'author_feed' username='0' %}"
+        hidden
+    ></div>
+
+    <header class="author-profile" id="author-profile" aria-live="polite">
+        <a href="{% url 'posts' %}" class="author-profile__back">← {% trans 'Postlar' %}</a>
+        <div class="author-profile__main">
+            <div class="author-profile__avatar-wrap" id="author-profile-avatar">
+                <span class="ig-post__avatar ig-post__avatar--placeholder author-profile__avatar" aria-hidden="true">?</span>
+            </div>
+            <div class="author-profile__info">
+                <h2 class="author-profile__username" id="author-profile-username">{{ author_username }}</h2>
+                <p class="author-profile__stats" id="author-profile-stats">…</p>
+                <div class="author-profile__actions" id="author-profile-actions"></div>
+            </div>
+        </div>
+    </header>
+
+    <div id="post-list" class="posts-feed"></div>
+    <div class="load-more-wrap" id="load-more-container">
+        <p class="feed-pagination__info" id="feed-pagination-info" hidden></p>
+        <button type="button" id="load-more-btn" onclick="loadPosts()">{% trans 'Yene gör' %}</button>
+        <p class="feed-pagination__loading" id="loading-text" hidden>{% trans 'Yüklenýär...' %}</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'js/comments-ui.js' %}"></script>
+<script src="{% static 'js/posts.js' %}"></script>
+{% endblock %}

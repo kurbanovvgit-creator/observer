@@ -154,10 +154,20 @@ LOCALE_PATHS = [
 # settings.py
 LOGOUT_REDIRECT_URL = '/register'  # Or whatever the name of your index view is
 
-# Google Gemini — book_platform/secrets.py (local, gitignored) or GEMINI_API_KEY env (server)
-try:
-    from .secrets import GEMINI_API_KEY as _GEMINI_API_KEY
-except ImportError:
-    _GEMINI_API_KEY = ''
-# secrets.py (local) wins over env — stale shell $env:GEMINI_API_KEY won't override
-GEMINI_API_KEY = _GEMINI_API_KEY or os.environ.get('GEMINI_API_KEY', '')
+def _load_gemini_api_key():
+    key = os.environ.get('GEMINI_API_KEY', '').strip()
+    if key:
+        return key
+    try:
+        from .secrets import GEMINI_API_KEY as secret_key
+        if secret_key and str(secret_key).strip():
+            return str(secret_key).strip()
+    except ImportError:
+        pass
+    for path in (BASE_DIR / 'gemini_api_key.txt', BASE_DIR / 'book_platform' / 'gemini_api_key.txt'):
+        if path.is_file():
+            return path.read_text(encoding='utf-8').strip()
+    return ''
+
+
+GEMINI_API_KEY = _load_gemini_api_key()

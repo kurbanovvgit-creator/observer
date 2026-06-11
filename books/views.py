@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.shortcuts import render, get_object_or_404
-from books.models import Book, Post, Comment, Profile, PostLike, PostView, UserFollow
+from books.models import Book, Post, Comment, CommentReport, Profile, PostLike, PostView, UserFollow
 from django.db.models import F
 from books.pdf_preview import refresh_book_preview, delete_book_preview
 from django.contrib.auth.decorators import login_required
@@ -10,12 +10,13 @@ from django.core.files.storage import default_storage
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from books.serializers import CommentSerializer, BookSerializer, PostSerializer
+from books.serializers import CommentSerializer, BookSerializer, PostSerializer, CommentReportMessageSerializer
 import logging
 import json
 from django.db.models import Sum
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.text import slugify
+from django.utils.html import strip_tags
 from django.core.paginator import Paginator
 from rest_framework import status
 
@@ -143,6 +144,20 @@ def book_create(request):
             if data['category'] not in dict(Book._meta.get_field('category').choices):
                 return Response({'success': False, 'message': 'Неверная категория'}, status=400)
 
+            duplicate = Book.objects.filter(
+                author=request.user,
+                title__iexact=data['title'],
+                approval_status=Book.ApprovalStatus.PENDING,
+            ).exists()
+            if duplicate:
+                return Response(
+                    {
+                        'success': False,
+                        'message': 'Bu kitap üçin garaşylýan haýyş eýýäm bar.',
+                    },
+                    status=400,
+                )
+
             # Передаем файл напрямую в data, не сохраняя его вручную
             if 'pdf' in request.FILES:
                 data['pdf'] = request.FILES['pdf']
@@ -150,18 +165,23 @@ def book_create(request):
             logger.info(f"Processed data for validation: {data}")
             serializer = BookSerializer(data=data, context={'request': request})
             if serializer.is_valid():
-                serializer.save(author=request.user)
-                book = serializer.instance
-                refresh_book_preview(book)
+                book = serializer.save(
+                    author=request.user,
+                    approval_status=Book.ApprovalStatus.PENDING,
+                )
                 pdf_path = book.pdf.name if book.pdf else None
                 full_path = book.pdf.url if book.pdf and hasattr(book.pdf, 'url') else None
                 logger.info(
-                    f"Book saved with id: {book.id}, author: {book.author.username}, title: {book.title}, pdf_path: {pdf_path}, full_path: {full_path}")
-                Post.objects.create(book=book, author=request.user,
-                                    content=data['title'])
-                profile, created = Profile.objects.get_or_create(user=request.user)
-                profile.save()
-                return Response({'success': True, 'book_id': book.id, 'pdf_url': full_path})
+                    f"Book submission saved with id: {book.id}, author: {book.author.username}, "
+                    f"title: {book.title}, pdf_path: {pdf_path}, full_path: {full_path}")
+                Profile.objects.get_or_create(user=request.user)
+                return Response({
+                    'success': True,
+                    'book_id': book.id,
+                    'pdf_url': full_path,
+                    'pending': True,
+                    'message': 'Haýyş iberildi. Admin tassyklanandan soň kitap neşir ediler.',
+                })
             else:
                 logger.error(f"Validation errors: {serializer.errors}")
                 return Response({'success': False, 'message': serializer.errors}, status=400)
@@ -429,15 +449,33 @@ def my_comments_view(request):
     if request.resolver_match.url_name == 'my_comments':
         return render(request, 'my_comments.html')
 
-    # API: все комментарии к постам, которые создал текущий пользователь
+    # API: комментарии к постам пользователя + ответы админа на его жалобы
     comments = (
         Comment.objects.filter(post__author=request.user, parent__isnull=True)
         .select_related('post', 'post__book', 'post__author', 'author', 'author__profile')
         .prefetch_related('replies', 'replies__author', 'replies__author__profile')
         .order_by('-created_at')
     )
-    serializer = CommentSerializer(comments, many=True)
-    return Response(serializer.data)
+    admin_reports = (
+        CommentReport.objects.filter(
+            reporter=request.user,
+            status__in=(
+                CommentReport.Status.REVIEWED,
+                CommentReport.Status.DISMISSED,
+            ),
+        )
+        .select_related('comment', 'comment__post', 'comment__post__book', 'reported_user')
+        .order_by('-reviewed_at', '-created_at')
+    )
+    admin_messages = [
+        report for report in admin_reports
+        if strip_tags(report.admin_notes or '').strip()
+    ]
+
+    return Response({
+        'post_comments': CommentSerializer(comments, many=True).data,
+        'admin_messages': CommentReportMessageSerializer(admin_messages, many=True).data,
+    })
 
 
 @api_view(['GET'])
@@ -582,3 +620,89 @@ def confirm_comment(request):
             return Response({'success': False, 'message': 'Только автор поста может подтвердить комментарий.'})
     except Comment.DoesNotExist:
         return Response({'success': False, 'message': 'Комментарий не найден.'})
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def comment_report_create(request):
+    comment_id = request.data.get('comment_id')
+    reported_username = (request.data.get('reported_user') or '').strip().lstrip('@')
+    reason = (request.data.get('reason') or '').strip()
+    message = (request.data.get('message') or '').strip()
+    report_type = (request.data.get('report_type') or CommentReport.ReportType.COMMENT).strip()
+
+    if report_type not in dict(CommentReport.ReportType.choices):
+        return Response(
+            {'success': False, 'message': 'Nädogry şikayat görnüşi.'},
+            status=400,
+        )
+
+    if not comment_id or not message:
+        return Response(
+            {'success': False, 'message': 'Ähli meýdanlary dolduryň.'},
+            status=400,
+        )
+
+    comment = get_object_or_404(Comment.objects.select_related('post', 'post__author', 'author'), id=comment_id)
+    post_author = comment.post.author
+
+    if report_type == CommentReport.ReportType.NO_CONFIRMATION:
+        if comment.author_id != request.user.id:
+            return Response(
+                {'success': False, 'message': 'Diňe öz teswiriňize tassyklanmadyk bolsa şikayat edip bilersiňiz.'},
+                status=400,
+            )
+        if comment.confirmed:
+            return Response(
+                {'success': False, 'message': 'Teswir eýýäm tassyklanan — şikayat gerek däl.'},
+                status=400,
+            )
+        if post_author.id == request.user.id:
+            return Response(
+                {'success': False, 'message': 'Öz postyňyza şikayat edip bolmaýar.'},
+                status=400,
+            )
+        reported_user = post_author
+        reason = CommentReport.Reason.NO_CONFIRMATION
+    else:
+        if not reported_username or not reason:
+            return Response(
+                {'success': False, 'message': 'Ähli meýdanlary dolduryň.'},
+                status=400,
+            )
+        if reason not in dict(CommentReport.Reason.choices):
+            return Response(
+                {'success': False, 'message': 'Nädogry sebäp.'},
+                status=400,
+            )
+        if comment.author_id == request.user.id:
+            return Response(
+                {'success': False, 'message': 'Öz teswiriňize şikayat edip bolmaýar.'},
+                status=400,
+            )
+        reported_user = get_object_or_404(User, username=reported_username)
+
+    if CommentReport.objects.filter(
+        reporter=request.user,
+        comment=comment,
+        report_type=report_type,
+    ).exists():
+        return Response(
+            {'success': False, 'message': 'Bu teswir üçin şeýle şikayat eýýäm iberildi.'},
+            status=400,
+        )
+
+    report = CommentReport.objects.create(
+        comment=comment,
+        reporter=request.user,
+        reported_user=reported_user,
+        report_type=report_type,
+        reason=reason,
+        message=message,
+    )
+
+    return Response({
+        'success': True,
+        'message': 'Şikayat admina iberildi. Sag boluň!',
+        'report_id': report.id,
+    })

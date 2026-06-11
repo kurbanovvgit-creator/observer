@@ -7,7 +7,16 @@
 {% block content %}
 <div class="content my-comments-page" data-page="my-comments">
     <h2 class="page-title">{% trans "Meniň teswirlerim" %}</h2>
-    <div id="comments" class="my-comments-list" aria-live="polite"></div>
+
+    <section class="my-comments-section" id="admin-messages-section" hidden aria-label="{% trans 'Admin hatlary' %}">
+        <h3 class="my-comments-section__title">{% trans "Admin jogaplary" %}</h3>
+        <div id="admin-messages" class="admin-messages-list" aria-live="polite"></div>
+    </section>
+
+    <section class="my-comments-section" id="post-comments-section" aria-label="{% trans 'Postlaryňyzdaky teswirler' %}">
+        <h3 class="my-comments-section__title" id="post-comments-title" hidden>{% trans "Postlaryňyza gelen teswirler" %}</h3>
+        <div id="comments" class="my-comments-list" aria-live="polite"></div>
+    </section>
 </div>
 {% endblock %}
 

@@ -126,6 +126,18 @@
     line-height: 1.35;
 }
 
+.book-form__hint {
+    margin: var(--space-sm) 0 0;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+
+.btn-add-submit:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
 /* ── Сетка кассет ── */
 .my-books-section {
     margin-top: var(--space-sm);
@@ -251,6 +263,27 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.cassette-card__status {
+    display: inline-block;
+    align-self: flex-start;
+    max-width: 100%;
+    font-size: 0.62rem;
+    font-weight: 600;
+    padding: 0.12rem 0.35rem;
+    border-radius: 3px;
+    margin-bottom: 0.35rem;
+}
+
+.cassette-card__status--pending {
+    color: #8a6d00;
+    background: rgba(255, 193, 7, 0.18);
+}
+
+.cassette-card__status--rejected {
+    color: #9b1c1c;
+    background: rgba(220, 53, 69, 0.14);
 }
 
 .cassette-card__desc {

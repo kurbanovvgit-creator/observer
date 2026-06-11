@@ -1,12 +1,13 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from django.conf import settings
-from .models import Book, Post, Comment, PostLike, Profile
+from .models import Book, Post, Comment, CommentReport, PostLike, Profile
 
 class BookSerializer(serializers.ModelSerializer):
     author = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), write_only=True, required=False)
     author_username = serializers.CharField(source='author.username', read_only=True)
     author_level = serializers.SerializerMethodField()
+    approval_status = serializers.CharField(read_only=True)
     pdf = serializers.FileField(required=False, allow_null=True)  # Разрешаем null и обрабатываем как FileField
 
     def get_author_level(self, obj):
@@ -22,7 +23,7 @@ class BookSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
         fields = ['id', 'author', 'author_username', 'author_level', 'title', 'description', 'pdf', 'created_at',
-                  'category', 'allow_download']
+                  'category', 'allow_download', 'approval_status']
 
     def create(self, validated_data):
         author = validated_data.pop('author', None)
@@ -129,7 +130,7 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = [
-            'id', 'content', 'line_number', 'author', 'author_username', 'author_level',
+            'id', 'post', 'content', 'line_number', 'author', 'author_username', 'author_level',
             'confirmed', 'created_at', 'replies', 'post_title', 'post_author', 'book_title',
             'avatar_url',
         ]
@@ -138,6 +139,29 @@ class CommentSerializer(serializers.ModelSerializer):
         author = validated_data.pop('author')
         comment = Comment.objects.create(author=author, **validated_data)
         return comment
+
+
+class CommentReportMessageSerializer(serializers.ModelSerializer):
+    reported_user = serializers.CharField(source='reported_user.username', read_only=True)
+    report_type_label = serializers.CharField(source='get_report_type_display', read_only=True)
+    status_label = serializers.CharField(source='get_status_display', read_only=True)
+    reason_label = serializers.CharField(source='get_reason_display', read_only=True)
+    comment_preview = serializers.SerializerMethodField()
+    admin_message = serializers.CharField(source='admin_notes', read_only=True)
+    book_title = serializers.CharField(source='comment.post.book.title', read_only=True)
+
+    def get_comment_preview(self, obj):
+        text = (obj.comment.content or '').strip()
+        return text[:160] if text else '—'
+
+    class Meta:
+        model = CommentReport
+        fields = [
+            'id', 'report_type', 'report_type_label', 'status', 'status_label',
+            'reason', 'reason_label', 'reported_user', 'comment_preview', 'book_title',
+            'admin_message', 'created_at', 'reviewed_at',
+        ]
+
 
 class PostLikeSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), write_only=True)

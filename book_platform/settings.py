@@ -29,9 +29,13 @@ DEBUG = True
 # ПРАВИЛЬНЫЙ ВАРИАНТ:
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'kurbanovvgit.pythonanywhere.com', 'Observer.pythonanywhere.com']
 
+INTERNAL_IPS = ['127.0.0.1', 'localhost']
+
 
 # Application definition
 INSTALLED_APPS = [
+    'jazzmin',
+    'ckeditor',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -42,6 +46,9 @@ INSTALLED_APPS = [
     'books.apps.BooksConfig',
 ]
 
+if DEBUG:
+    INSTALLED_APPS += ['debug_toolbar']
+
 LANGUAGES = [
     ('ru', _('Russian')),
     ('en', _('English')),
@@ -51,6 +58,10 @@ LANGUAGES = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+]
+if DEBUG:
+    MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
+MIDDLEWARE += [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -171,3 +182,17 @@ def _load_gemini_api_key():
 
 
 GEMINI_API_KEY = _load_gemini_api_key()
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'Custom',
+        'toolbar_Custom': [
+            ['Bold', 'Italic', 'Underline', 'Strike'],
+            ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent'],
+            ['Link', 'Unlink'],
+            ['RemoveFormat', 'Source'],
+        ],
+        'height': 240,
+        'width': '100%',
+    },
+}

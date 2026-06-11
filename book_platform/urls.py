@@ -42,6 +42,7 @@ urlpatterns = [
     path('api/post-view/', views.record_post_view, name='record_post_view'),
     path('api/follow/', views.toggle_follow, name='toggle_follow'),
     path('api/confirm-comment/', views.confirm_comment, name='confirm_comment'),
+    path('api/comment-report/', views.comment_report_create, name='comment_report_create'),
 ]
 
 # 2. Пути с поддержкой языков (ТОЛЬКО СТРАНИЦЫ)
@@ -61,3 +62,4 @@ urlpatterns += i18n_patterns(
 # Поддержка медиа-файлов (аватарки, PDF) в режиме отладки
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += [path('__debug__/', include('debug_toolbar.urls'))]

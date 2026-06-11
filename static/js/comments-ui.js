@@ -99,6 +99,25 @@ window.CommentsUI = (function () {
             </div>`;
     }
 
+    function buildReportButton(postId, commentId, username, reportType, label, inline) {
+        const wrapTag = inline ? 'span' : 'div';
+        const wrapClass = inline ? 'comment-card__report-inline' : 'comment-card__report-row';
+        return `
+            <${wrapTag} class="${wrapClass}">
+                <button
+                    type="button"
+                    class="comment-card__action comment-card__action--report${reportType === 'no_confirmation' ? ' comment-card__action--report-post' : ''}"
+                    data-report-comment="${commentId}"
+                    data-report-post="${postId}"
+                    data-report-user="${escapeHtml(username)}"
+                    data-report-type="${reportType}"
+                    onclick="CommentsUI.openReportModal(this)"
+                >
+                    🚩 ${escapeHtml(label || gettext('Şikayat'))}
+                </button>
+            </${wrapTag}>`;
+    }
+
     function renderCard(comment, options) {
         const {
             postId,
@@ -108,8 +127,10 @@ window.CommentsUI = (function () {
             readOnly = false
         } = options;
 
-        const isCurrentUser = comment.author_username === currentUsername;
-        const isPostAuthor = currentUsername === postAuthorUsername;
+        const resolvedPostAuthor = postAuthorUsername || comment.post_author || '';
+        const viewer = currentUsername || '';
+        const isCurrentUser = viewer && comment.author_username === viewer;
+        const isPostAuthor = viewer && viewer === resolvedPostAuthor;
         const isConfirmed = Boolean(comment.confirmed);
         const confirmed = isConfirmed ? ' confirmed' : '';
 
@@ -146,14 +167,46 @@ window.CommentsUI = (function () {
             ? `<p class="comment-card__line">${gettext('Setir')}: ${comment.line_number}</p>`
             : '';
 
-        const actions = readOnly || isConfirmed
-            ? ''
-            : `
-            <div class="comment-card__actions">
+        let actionButtons = '';
+
+        if (!readOnly && !isConfirmed) {
+            actionButtons += `
                 <button type="button" class="comment-card__action comment-card__action--primary" onclick="CommentsUI.toggleReply(${postId}, ${comment.id})">
                     💬 ${gettext('Jogap ber')}
-                </button>
-            </div>`;
+                </button>`;
+        }
+
+        if (viewer && comment.author_username !== viewer) {
+            actionButtons += buildReportButton(
+                postId,
+                comment.id,
+                comment.author_username,
+                'comment',
+                gettext('Şikayat'),
+                true
+            );
+        }
+
+        if (
+            viewer &&
+            isCurrentUser &&
+            !isConfirmed &&
+            resolvedPostAuthor &&
+            resolvedPostAuthor !== viewer
+        ) {
+            actionButtons += buildReportButton(
+                postId,
+                comment.id,
+                resolvedPostAuthor,
+                'no_confirmation',
+                gettext('Post awtoryna şikayat'),
+                true
+            );
+        }
+
+        const actions = actionButtons
+            ? `<div class="comment-card__actions">${actionButtons}</div>`
+            : '';
 
         const confirmedBadge = isConfirmed
             ? `<span class="comment-card__badge">${gettext('Tassyklanan')}</span>`
@@ -189,16 +242,210 @@ window.CommentsUI = (function () {
             </article>`;
     }
 
-    function renderMyCommentCard(comment) {
+    function renderMyCommentCard(comment, currentUsername) {
         const bookTitle = escapeHtml(comment.book_title || comment.post_title || '—');
         const commentAuthor = escapeHtml(comment.author_username || '—');
         const metaExtra = ` · ${gettext('Kitap')}: ${bookTitle} · ${gettext('Awtor')}: ${commentAuthor}`;
 
         return renderCard(comment, {
-            postId: 0,
+            postId: comment.post || 0,
+            postAuthorUsername: comment.post_author || '',
             readOnly: true,
+            currentUsername,
             metaExtra
         });
+    }
+
+    function ensureReportModal() {
+        if (document.getElementById('comment-report-modal')) return;
+
+        const reasons = [
+            ['spam', gettext('Spam')],
+            ['abuse', gettext('Hakaret / ýaman söz')],
+            ['misinfo', gettext('Ýalan maglumat')],
+            ['copyright', gettext('Awtor hukugy')],
+            ['harassment', gettext('Ýüze çykýan betlik')],
+            ['other', gettext('Beýleki')],
+        ];
+
+        const options = reasons.map(([value, label]) =>
+            `<option value="${value}">${escapeHtml(label)}</option>`
+        ).join('');
+
+        document.body.insertAdjacentHTML('beforeend', `
+            <div class="report-modal" id="comment-report-modal" hidden aria-hidden="true">
+                <div class="report-modal__backdrop" onclick="CommentsUI.closeReportModal()"></div>
+                <div class="report-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="report-modal-title">
+                    <header class="report-modal__header">
+                        <h3 id="report-modal-title">${gettext('Admina şikayat')}</h3>
+                        <button type="button" class="report-modal__close" onclick="CommentsUI.closeReportModal()" aria-label="${gettext('Ýap')}">×</button>
+                    </header>
+                    <form class="report-modal__form" id="comment-report-form" novalidate onsubmit="CommentsUI.submitReport(event)">
+                        <input type="hidden" id="report-comment-id" name="comment_id" value="">
+                        <input type="hidden" id="report-type" name="report_type" value="comment">
+                        <p class="report-modal__hint" id="report-modal-hint" hidden></p>
+                        <label class="report-modal__label" for="report-user-input">@${gettext('Ulanyjy')}</label>
+                        <div class="report-modal__at-field">
+                            <span class="report-modal__at">@</span>
+                            <input type="text" id="report-user-input" name="reported_user" autocomplete="username" placeholder="${gettext('username')}">
+                        </div>
+                        <div id="report-reason-wrap">
+                            <label class="report-modal__label" for="report-reason">${gettext('Sebäp')}</label>
+                            <select id="report-reason" name="reason">
+                                <option value="no_confirmation">${escapeHtml(gettext('Post awtory teswiri tassyklamady'))}</option>
+                                ${options}
+                            </select>
+                        </div>
+                        <label class="report-modal__label" for="report-message">${gettext('Goşmaça maglumat')}</label>
+                        <textarea id="report-message" name="message" rows="4" placeholder="${gettext('Näme bolup geçdi?')}"></textarea>
+                        <div class="report-modal__actions">
+                            <button type="button" class="comment-composer__btn comment-composer__btn--ghost" onclick="CommentsUI.closeReportModal()">${gettext('Ýatyr')}</button>
+                            <button type="button" class="comment-composer__btn comment-composer__btn--primary" id="report-submit-btn" onclick="CommentsUI.submitReportFromBtn()">${gettext('Ugrat')}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        `);
+    }
+
+    function openReportModal(button) {
+        ensureReportModal();
+        const modal = document.getElementById('comment-report-modal');
+        const commentId = button.dataset.reportComment;
+        const username = button.dataset.reportUser || '';
+        const reportType = button.dataset.reportType || 'comment';
+        const titleEl = document.getElementById('report-modal-title');
+        const hintEl = document.getElementById('report-modal-hint');
+        const reasonWrap = document.getElementById('report-reason-wrap');
+        const userInput = document.getElementById('report-user-input');
+
+        document.getElementById('report-comment-id').value = commentId;
+        document.getElementById('report-type').value = reportType;
+        document.getElementById('report-user-input').value = username;
+        document.getElementById('report-message').value = '';
+
+        const reasonSelect = document.getElementById('report-reason');
+
+        if (reportType === 'no_confirmation') {
+            if (titleEl) titleEl.textContent = gettext('Post awtory tassyklamady');
+            if (hintEl) {
+                hintEl.textContent = gettext('Teswiriňiz heniz tassyklanmady. Post awtory barada admina habar beriň.');
+                hintEl.hidden = false;
+            }
+            if (reasonWrap) reasonWrap.hidden = true;
+            if (userInput) {
+                userInput.readOnly = true;
+                userInput.value = username;
+            }
+            if (reasonSelect) reasonSelect.value = 'no_confirmation';
+        } else {
+            if (titleEl) titleEl.textContent = gettext('Admina şikayat');
+            if (hintEl) hintEl.hidden = true;
+            if (reasonWrap) reasonWrap.hidden = false;
+            if (userInput) {
+                userInput.readOnly = false;
+                userInput.value = username;
+            }
+            if (reasonSelect) reasonSelect.value = 'abuse';
+        }
+
+        modal.hidden = false;
+        modal.setAttribute('aria-hidden', 'false');
+        modal.classList.add('is-open');
+        document.getElementById('report-message').focus();
+    }
+
+    function closeReportModal() {
+        const modal = document.getElementById('comment-report-modal');
+        if (!modal) return;
+        modal.hidden = true;
+        modal.setAttribute('aria-hidden', 'true');
+        modal.classList.remove('is-open');
+    }
+
+    function submitReportFromBtn() {
+        submitReport({ preventDefault() {} });
+    }
+
+    function submitReport(event) {
+        event.preventDefault();
+        const submitBtn = document.getElementById('report-submit-btn');
+        if (submitBtn && submitBtn.disabled) return;
+
+        const commentId = document.getElementById('report-comment-id').value;
+        const reportType = document.getElementById('report-type').value || 'comment';
+        const reportedUser = document.getElementById('report-user-input').value.trim().replace(/^@+/, '');
+        const reasonEl = document.getElementById('report-reason');
+        const reason = reportType === 'no_confirmation'
+            ? 'no_confirmation'
+            : (reasonEl ? reasonEl.value : '');
+        const message = document.getElementById('report-message').value.trim();
+
+        if (!commentId) {
+            alert(gettext('Ýalňyşlyk'));
+            return;
+        }
+        if (reportType !== 'no_confirmation' && (!reportedUser || !reason)) {
+            alert(gettext('Ähli meýdanlary dolduryň.'));
+            return;
+        }
+        if (!message) {
+            alert(gettext('Goşmaça maglumat ýazyň.'));
+            return;
+        }
+
+        if (submitBtn) submitBtn.disabled = true;
+
+        fetch('/api/comment-report/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getReportCookie('csrftoken'),
+            },
+            body: JSON.stringify({
+                comment_id: commentId,
+                report_type: reportType,
+                reported_user: reportedUser,
+                reason,
+                message,
+            }),
+        })
+            .then(async (response) => {
+                let data = {};
+                try {
+                    data = await response.json();
+                } catch {
+                    data = { message: gettext('Ugratmak başartmady.') };
+                }
+                return { ok: response.ok, data };
+            })
+            .then(({ ok, data }) => {
+                if (ok && data.success) {
+                    alert(data.message || gettext('Şikayat iberildi.'));
+                    closeReportModal();
+                } else {
+                    alert(data.message || gettext('Ýalňyşlyk'));
+                }
+            })
+            .catch(() => alert(gettext('Ugratmak başartmady.')))
+            .finally(() => {
+                if (submitBtn) submitBtn.disabled = false;
+            });
+    }
+
+    function getReportCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
     }
 
     function toggleReply(postId, commentId) {
@@ -223,6 +470,10 @@ window.CommentsUI = (function () {
         renderMyCommentCard,
         toggleReply,
         toggleComposer,
-        resetComposer
+        resetComposer,
+        openReportModal,
+        closeReportModal,
+        submitReport,
+        submitReportFromBtn,
     };
 })();

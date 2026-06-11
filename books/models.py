@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from ckeditor.fields import RichTextField
 
 
 class Profile(models.Model):
@@ -13,12 +14,22 @@ class Profile(models.Model):
 
 
 class Book(models.Model):
+    class ApprovalStatus(models.TextChoices):
+        PENDING = 'pending', 'Garaşylýar'
+        APPROVED = 'approved', 'Tassyklandy'
+        REJECTED = 'rejected', 'Ret edildi'
+
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='books')
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     pdf = models.FileField(upload_to='books/', null=True, blank=True)
     preview_image = models.ImageField(upload_to='books/previews/', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    approval_status = models.CharField(
+        max_length=20,
+        choices=ApprovalStatus.choices,
+        default=ApprovalStatus.PENDING,
+    )
     category = models.CharField(
         max_length=50,
         choices=[
@@ -97,3 +108,45 @@ class UserFollow(models.Model):
 
     def __str__(self):
         return f"{self.follower.username} → {self.following.username}"
+
+
+class CommentReport(models.Model):
+    class ReportType(models.TextChoices):
+        COMMENT = 'comment', 'Teswir barada'
+        NO_CONFIRMATION = 'no_confirmation', 'Tassyklanmadyk teswir'
+
+    class Reason(models.TextChoices):
+        SPAM = 'spam', 'Spam'
+        ABUSE = 'abuse', 'Hakaret / ýaman söz'
+        MISINFO = 'misinfo', 'Ýalan maglumat'
+        COPYRIGHT = 'copyright', 'Awtor hukugy'
+        HARASSMENT = 'harassment', 'Ýüze çykýan betlik'
+        NO_CONFIRMATION = 'no_confirmation', 'Post awtory teswiri tassyklamady'
+        OTHER = 'other', 'Beýleki'
+
+    class Status(models.TextChoices):
+        PENDING = 'pending', 'Garaşylýar'
+        REVIEWED = 'reviewed', 'Görüldi'
+        DISMISSED = 'dismissed', 'Ret edildi'
+
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name='reports')
+    reporter = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comment_reports_sent')
+    reported_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comment_reports_received')
+    report_type = models.CharField(
+        max_length=20,
+        choices=ReportType.choices,
+        default=ReportType.COMMENT,
+    )
+    reason = models.CharField(max_length=20, choices=Reason.choices)
+    message = models.TextField(help_text='Goşmaça maglumat')
+    status = models.CharField(max_length=20, choices=Status.choices, default=Status.PENDING)
+    admin_notes = RichTextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        unique_together = ('reporter', 'comment', 'report_type')
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'Şikayat #{self.id} ({self.get_report_type_display()}) → @{self.reported_user.username}'

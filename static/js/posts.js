@@ -18,6 +18,9 @@ function readFeedConfig() {
     feedConfig.mode = el.dataset.mode || 'all';
     feedConfig.authorUsername = el.dataset.authorUsername || null;
     feedConfig.authorUrlTpl = el.dataset.authorUrlTpl || '';
+    if (el.dataset.currentUser) {
+        currentUsername = el.dataset.currentUser;
+    }
 }
 
 function authorProfileUrl(username) {
@@ -48,9 +51,10 @@ function loadCurrentUser() {
     fetch('/api/get-current-user/')
         .then(response => response.json())
         .then(data => {
-            currentUsername = data.username;
+            currentUsername = data.username || currentUsername;
             currentUserAvatar = data.avatar || null;
             console.log('Häzirki ulanyjy:', currentUsername);
+            refreshOpenCommentPanels();
             if (feedConfig.mode === 'author') {
                 loadAuthorProfile();
             }
@@ -529,7 +533,21 @@ function toggleLike(postId, button) {
     });
 }
 
+function getPostAuthorUsername(postId) {
+    const toggleEl = document.querySelector(`[data-comments-toggle="${postId}"]`);
+    return toggleEl?.dataset.postAuthor || '';
+}
+
+function refreshOpenCommentPanels() {
+    document.querySelectorAll('.ig-post__comments.is-open').forEach((panel) => {
+        const postId = panel.id.replace('comments-panel-', '');
+        if (postId) loadComments(postId);
+    });
+}
+
 function loadComments(postId, postAuthorUsername) {
+    const authorUsername = postAuthorUsername || getPostAuthorUsername(postId);
+
     fetch(`/api/comment-list-with-replies/${postId}/`)
         .then(response => response.json())
         .then(data => {
@@ -541,7 +559,7 @@ function loadComments(postId, postAuthorUsername) {
                 commentList.innerHTML += `<p class="comments-empty">${gettext('Teswir ýok')}.</p>`;
             } else {
                 data.forEach(comment => {
-                    renderComment(comment, commentList, postId, postAuthorUsername);
+                    renderComment(comment, commentList, postId, authorUsername);
                 });
             }
         })
@@ -750,6 +768,9 @@ function debouncedSearch() {
 
 function initPostsPage() {
     readFeedConfig();
+    if (currentUsername) {
+        console.log('Ulanyjy (sahypadan):', currentUsername);
+    }
     loadCurrentUser();
 
     window.addEventListener('scroll', () => {

@@ -26,10 +26,147 @@
     color: var(--text-muted);
 }
 
-.comment-card.confirmed .comment-card__actions,
+.comment-card.confirmed .comment-card__action--primary,
 .comment-card.confirmed .comment-card__extra,
 .comment-card.confirmed .comment-card__footer {
     display: none !important;
+}
+
+.comment-card__report-row {
+    margin-top: var(--space-sm);
+}
+
+.comment-card__action--report {
+    color: var(--danger);
+    border-color: rgba(198, 40, 40, 0.25);
+    background: rgba(198, 40, 40, 0.06);
+}
+
+.comment-card__action--report:hover {
+    background: rgba(198, 40, 40, 0.12);
+}
+
+.report-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 12000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-md);
+}
+
+.report-modal[hidden] {
+    display: none !important;
+}
+
+.report-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(20, 16, 12, 0.55);
+}
+
+.report-modal__dialog {
+    position: relative;
+    width: min(100%, 28rem);
+    max-height: 90vh;
+    overflow: auto;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg, 0 12px 40px rgba(0, 0, 0, 0.2));
+}
+
+.report-modal__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    padding: var(--space-md) var(--space-lg);
+    border-bottom: 1px solid var(--border);
+}
+
+.report-modal__header h3 {
+    margin: 0;
+    font-size: 1.05rem;
+}
+
+.report-modal__close {
+    border: none;
+    background: transparent;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    color: var(--text-muted);
+}
+
+.report-modal__form {
+    padding: var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.report-modal__label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.report-modal__at-field {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.45rem 0.65rem;
+    background: var(--surface-2);
+}
+
+.report-modal__at {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.report-modal__at-field input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    outline: none;
+    font: inherit;
+}
+
+.report-modal__form select,
+.report-modal__form textarea {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.55rem 0.65rem;
+    font: inherit;
+    background: var(--surface);
+}
+
+.report-modal__hint {
+    margin: 0;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    line-height: 1.45;
+    padding: 0.5rem 0.65rem;
+    background: rgba(255, 193, 7, 0.12);
+    border-radius: var(--radius-sm);
+}
+
+.comment-card__action--report-post {
+    color: #8a6d00;
+    border-color: rgba(255, 193, 7, 0.35);
+    background: rgba(255, 193, 7, 0.1);
+}
+
+.report-modal__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-sm);
+    margin-top: var(--space-sm);
 }
 
 .comment-card__badge {
@@ -120,6 +257,10 @@
     align-items: center;
     gap: var(--space-md);
     font-size: 0.8125rem;
+}
+
+.comment-card__report-inline {
+    display: inline-flex;
 }
 
 .comment-card button.comment-card__action {

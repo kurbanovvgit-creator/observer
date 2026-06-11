@@ -41,8 +41,9 @@
                     <span class="toggle-switch__track" aria-hidden="true"></span>
                     <span class="toggle-switch__text">{% trans "Ýüklemäge rugsat" %}</span>
                 </label>
-                <button type="button" class="btn-add-submit" onclick="addBook()">{% trans "Kitaby goş" %}</button>
+                <button type="button" class="btn-add-submit" id="btn-add-book" onclick="addBook()">{% trans "Kitaby goş" %}</button>
             </div>
+            <p class="book-form__hint">{% trans "Kitap admin tarapyndan tassyklanandan soň neşir ediler." %}</p>
         </div>
     </details>
 

@@ -16,6 +16,7 @@
         data-mode="author"
         data-author-username="{{ author_username }}"
         data-author-url-tpl="{% url 'author_feed' username='0' %}"
+        {% if request.user.is_authenticated %}data-current-user="{{ request.user.username }}"{% endif %}
         hidden
     ></div>
 

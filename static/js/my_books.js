@@ -1,4 +1,8 @@
 let booksCache = [];
+let addBookSubmitting = false;
+
+const ADD_BOOK_LABEL = typeof gettext === 'function' ? gettext('Kitaby goş') : 'Kitaby goş';
+const ADD_BOOK_LOADING = typeof gettext === 'function' ? gettext('Ugradylýar...') : 'Ugradylýar...';
 
 const CATEGORY_KEYS = {
     '1': 'Kitap',
@@ -34,11 +38,14 @@ function clearAddForm() {
 }
 
 function addBook() {
+    if (addBookSubmitting) return;
+
     const title = document.getElementById('book-title').value.trim();
     const description = document.getElementById('book-description').value.trim();
     const category = document.getElementById('book-category').value;
     const pdfInput = document.getElementById('book-pdf');
     const allowDownload = document.getElementById('allow-download').checked;
+    const submitBtn = document.getElementById('btn-add-book');
 
     if (!title) {
         alert(gettext('Kitabyň ady hökman bolmaly!'));
@@ -58,6 +65,12 @@ function addBook() {
         formData.append('pdf', pdfInput.files[0]);
     }
 
+    addBookSubmitting = true;
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = ADD_BOOK_LOADING;
+    }
+
     fetch('/api/books/create/', {
         method: 'POST',
         headers: { 'X-CSRFToken': getCookie('csrftoken') },
@@ -69,17 +82,40 @@ function addBook() {
                 clearAddForm();
                 collapseAddForm();
                 loadBooks();
+                alert(data.message || gettext('Haýyş iberildi. Admin tassyklanandan soň kitap neşir ediler.'));
             } else {
-                alert(data.message || gettext('Nädogry maglumatlar'));
+                const msg = typeof data.message === 'string'
+                    ? data.message
+                    : gettext('Nädogry maglumatlar');
+                alert(msg);
             }
         })
-        .catch(error => alert('Серверда хаталык: ' + error.message));
+        .catch(error => alert('Серверда хаталык: ' + error.message))
+        .finally(() => {
+            addBookSubmitting = false;
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = ADD_BOOK_LABEL;
+            }
+        });
+}
+
+function getApprovalBadge(book) {
+    const status = book.approval_status || 'approved';
+    if (status === 'pending') {
+        return `<span class="cassette-card__status cassette-card__status--pending">${gettext('Garaşylýar (admin)')}</span>`;
+    }
+    if (status === 'rejected') {
+        return `<span class="cassette-card__status cassette-card__status--rejected">${gettext('Ret edildi')}</span>`;
+    }
+    return '';
 }
 
 function buildCassetteCard(book) {
     const title = escapeHtml(book.title || gettext('No Title'));
     const desc = escapeHtml(book.description || '');
     const cat = getCategoryLabel(book.category);
+    const statusBadge = getApprovalBadge(book);
     const pdfBlock = book.pdf
         ? `<a href="${book.pdf}" target="_blank" rel="noopener">${gettext('PDF')}</a>` +
           (book.allow_download ? ` · <a href="${book.pdf}" download>${gettext('Ýükle')}</a>` : '')
@@ -96,6 +132,7 @@ function buildCassetteCard(book) {
         </div>
         <div class="cassette-card__body">
             <h3 class="cassette-card__title" title="${title}">${title}</h3>
+            ${statusBadge}
             <span class="cassette-card__cat">${escapeHtml(cat)}</span>
             ${desc ? `<p class="cassette-card__desc">${desc}</p>` : ''}
             <div class="cassette-card__links">${pdfBlock}</div>

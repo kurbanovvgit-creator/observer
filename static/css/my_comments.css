@@ -3,3 +3,110 @@
 .my-comments-page #comments {
     max-width: 100%;
 }
+
+.my-comments-section {
+    margin-bottom: var(--space-lg);
+}
+
+.my-comments-section__title {
+    margin: 0 0 var(--space-md);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.admin-messages-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    margin-bottom: var(--space-md);
+}
+
+.admin-message-card {
+    background: linear-gradient(145deg, #fffef9, var(--surface));
+    border: 1px solid #d4c4ad;
+    border-left: 4px solid var(--primary);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: var(--space-md) var(--space-lg);
+}
+
+.admin-message-card--dismissed {
+    border-left-color: var(--text-muted);
+    opacity: 0.92;
+}
+
+.admin-message-card__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-sm);
+}
+
+.admin-message-card__badge {
+    display: inline-block;
+    padding: 0.15rem 0.55rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #fff;
+    background: var(--primary);
+    border-radius: 999px;
+}
+
+.admin-message-card__status {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--success);
+}
+
+.admin-message-card--dismissed .admin-message-card__status {
+    color: var(--text-muted);
+}
+
+.admin-message-card__date {
+    margin-left: auto;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.admin-message-card__meta,
+.admin-message-card__ref {
+    margin: 0 0 var(--space-sm);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+
+.admin-message-card__body {
+    font-size: 0.92rem;
+    line-height: 1.55;
+    color: var(--text);
+}
+
+.admin-message-card__body p {
+    margin: 0 0 0.5rem;
+}
+
+.admin-message-card__body p:last-child {
+    margin-bottom: 0;
+}
+
+.admin-message-card__body ul,
+.admin-message-card__body ol {
+    margin: 0.35rem 0 0.5rem 1.1rem;
+    padding: 0;
+}
+
+@media (max-width: 768px) {
+    .admin-message-card {
+        padding: var(--space-md);
+    }
+
+    .admin-message-card__date {
+        margin-left: 0;
+        width: 100%;
+    }
+}
